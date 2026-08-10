@@ -181,13 +181,13 @@
 
     <form id="login-form" class="space-y-4 animate-slide-up">
       <div>
-        <label class="block text-sm font-medium mb-2 text-ink-soft">Email o usuario</label>
-        <input type="text" id="login-email" class="input" placeholder="tu@email.com" required />
+        <label class="block text-sm font-medium mb-2 text-ink-soft">Email</label>
+        <input type="email" id="login-email" class="input" placeholder="tu@email.com" required autocomplete="email" />
       </div>
       <div>
         <label class="block text-sm font-medium mb-2 text-ink-soft">Contraseña</label>
         <div class="relative">
-          <input type="password" id="login-password" class="input pr-12" placeholder="••••••••" required minlength="6" />
+          <input type="password" id="login-password" class="input pr-12" placeholder="••••••••" required minlength="6" autocomplete="current-password" />
           <button type="button" class="absolute right-3 top-1/2 -translate-y-1/2 text-ink-soft hover:text-accent" onclick="togglePassword('login-password')">👁</button>
         </div>
       </div>
@@ -203,16 +203,6 @@
       <button type="submit" id="login-submit" class="btn btn-primary w-full mt-4">
         <span id="login-text">Entrar</span>
         <span id="login-spinner" class="spinner hidden"></span>
-      </button>
-
-      <div class="relative my-6">
-        <div class="absolute inset-0 flex items-center"><div class="w-full border-t border-surface-elevated2"></div></div>
-        <div class="relative flex justify-center text-xs"><span class="bg-surface-base px-3 text-ink-soft">o continuá con</span></div>
-      </div>
-
-      <button type="button" id="login-google" class="btn btn-secondary w-full">
-        <svg class="w-5 h-5" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
-        Continuar con Google
       </button>
     </form>
 
@@ -730,7 +720,7 @@
 <!-- ============================================ -->
 <script type="module">
   // ==========================================
-  // 🔥 FIREBASE CONFIG - REEMPLAZÁ CON TUS CREDENCIALES
+  // 🔥 FIREBASE CONFIG - TUS CREDENCIALES
   // ==========================================
   const firebaseConfig = {
     apiKey: "AIzaSyDWKe6doLG0wTM3omZK9aNGh6dq6DX-K5U",
@@ -741,7 +731,7 @@
     appId: "1:829438788161:web:3dd7d1bbab2e245ee27cc0"
   };
 
-  // Email que al iniciar sesión con Google obtiene permisos de ADMIN automáticamente
+  // El único email que tiene permisos de admin
   const ADMIN_EMAIL = "demiancepeda2005@gmail.com";
 
   // ==========================================
@@ -750,12 +740,12 @@
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-app.js";
   import {
     getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword,
-    signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged,
-    sendPasswordResetEmail, updateProfile, setPersistence, browserLocalPersistence, browserSessionPersistence
+    signOut, onAuthStateChanged, sendPasswordResetEmail, updateProfile,
+    setPersistence, browserLocalPersistence, browserSessionPersistence
   } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-auth.js";
   import {
     getFirestore, doc, setDoc, getDoc, getDocs, updateDoc, deleteDoc,
-    collection, query, where, orderBy, limit, onSnapshot, serverTimestamp, addDoc
+    collection, query, where, orderBy, limit, serverTimestamp, addDoc
   } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-firestore.js";
 
   // ==========================================
@@ -774,15 +764,14 @@
   // STATE
   // ==========================================
   const state = {
-    user: null,            // Firebase user
-    userData: null,        // Firestore user data
+    user: null,
+    userData: null,
     currentScreen: 'splash',
     adminView: 'dashboard',
     users: [],
     promos: [],
     achievements: [],
     news: [],
-    reservations: [],
     userFilter: 'all',
   };
 
@@ -795,7 +784,6 @@
     if (el) {
       el.classList.add('active');
       state.currentScreen = screen;
-      // Update nav active states
       document.querySelectorAll('.nav-btn').forEach(b => {
         const isActive = b.dataset.nav === screen;
         b.classList.toggle('text-accent', isActive);
@@ -815,7 +803,6 @@
       b.classList.toggle('bg-surface-elevated', isActive);
       b.classList.toggle('text-accent', isActive);
     });
-    // Load data for view
     if (view === 'users') renderUsers();
     if (view === 'promos') renderAdminPromos();
     if (view === 'achievements') renderAdminAchievements();
@@ -853,7 +840,7 @@
   };
 
   // ==========================================
-  // AUTH
+  // HELPERS
   // ==========================================
   function generateReferralCode() {
     return Math.random().toString(36).substring(2, 8).toUpperCase();
@@ -866,26 +853,33 @@
       'auth/weak-password': 'Contraseña muy débil (mínimo 6 caracteres)',
       'auth/user-not-found': 'Usuario no encontrado',
       'auth/wrong-password': 'Contraseña incorrecta',
-      'auth/invalid-credential': 'Credenciales inválidas',
+      'auth/invalid-credential': 'Email o contraseña incorrectos',
       'auth/too-many-requests': 'Demasiados intentos, esperá un momento',
       'auth/network-request-failed': 'Error de conexión'
     };
     return msgs[code] || 'Ocurrió un error';
   }
 
+  function isAdminEmail(email) {
+    return email?.toLowerCase().trim() === ADMIN_EMAIL.toLowerCase();
+  }
+
   async function createUserDocument(firebaseUser, extraData = {}) {
+    const email = firebaseUser.email;
+    const userIsAdmin = isAdminEmail(email);
+
     const userData = {
       uid: firebaseUser.uid,
-      email: firebaseUser.email,
-      username: extraData.username || firebaseUser.email.split('@')[0],
-      displayName: extraData.displayName || firebaseUser.displayName || 'Usuario',
-      avatar: firebaseUser.photoURL || null,
-      provider: extraData.provider || 'email',
-      role: extraData.role || 'user',
-      status: extraData.status || 'pending',
-      tier: extraData.tier || 'bronze',
-      hoursBalance: extraData.hoursBalance || 0,
-      hoursTotal: extraData.hoursTotal || 0,
+      email: email,
+      username: extraData.username || email.split('@')[0],
+      displayName: extraData.displayName || firebaseUser.displayName || email.split('@')[0],
+      avatar: null,
+      provider: 'email',
+      role: userIsAdmin ? 'admin' : (extraData.role || 'user'),
+      status: userIsAdmin ? 'approved' : (extraData.status || 'pending'),
+      tier: userIsAdmin ? 'platinum' : (extraData.tier || 'bronze'),
+      hoursBalance: userIsAdmin ? 999 : (extraData.hoursBalance || 0),
+      hoursTotal: userIsAdmin ? 999 : (extraData.hoursTotal || 0),
       totalHoursPlayed: 0,
       streakDays: 0,
       referralCode: generateReferralCode(),
@@ -895,7 +889,6 @@
       },
       createdAt: serverTimestamp(),
       lastLogin: serverTimestamp(),
-      ...extraData.overrides
     };
     await setDoc(doc(db, 'users', firebaseUser.uid), userData);
     return userData;
@@ -906,7 +899,37 @@
     return snap.exists() ? snap.data() : null;
   }
 
-  // Email/Password login
+  // 🔑 Fuerza el admin si el email corresponde (aunque el documento esté en "pending" u otro rol)
+  async function forceAdminIfNeeded(firebaseUser, userData) {
+    if (!isAdminEmail(firebaseUser.email)) return userData;
+    if (userData.role === 'admin' && userData.status === 'approved') return userData;
+
+    console.log('👑 Admin detectado, forzando permisos...');
+    await updateDoc(doc(db, 'users', firebaseUser.uid), {
+      role: 'admin',
+      status: 'approved',
+      tier: 'platinum',
+      hoursBalance: 999,
+      hoursTotal: 999,
+      lastLogin: serverTimestamp(),
+    });
+    return { ...userData, role: 'admin', status: 'approved', tier: 'platinum', hoursBalance: 999, hoursTotal: 999 };
+  }
+
+  async function logAdminAction(action, details = {}) {
+    if (!state.user || !db) return;
+    try {
+      await addDoc(collection(db, 'adminLogs'), {
+        adminId: state.user.uid,
+        adminEmail: state.user.email,
+        action, details, timestamp: serverTimestamp()
+      });
+    } catch (e) { console.error(e); }
+  }
+
+  // ==========================================
+  // LOGIN (email/password)
+  // ==========================================
   document.getElementById('login-form').addEventListener('submit', async (e) => {
     e.preventDefault();
     const email = document.getElementById('login-email').value.trim();
@@ -923,51 +946,13 @@
       showToast('¡Bienvenido! 🎮', 'success');
     } catch (err) {
       showToast(getErrorMessage(err.code), 'error');
-    } finally {
       btn.disabled = false; text.textContent = 'Entrar'; spinner.classList.add('hidden');
     }
   });
 
-  // Google login (auto-admin si es ADMIN_EMAIL)
-  document.getElementById('login-google').addEventListener('click', async () => {
-    const btn = document.getElementById('login-google');
-    btn.disabled = true;
-    try {
-      const provider = new GoogleAuthProvider();
-      const result = await signInWithPopup(auth, provider);
-      const user = result.user;
-
-      // Verificar si ya existe en Firestore
-      const existingData = await getUserData(user.uid);
-      if (!existingData) {
-        // Es nuevo - crear cuenta
-        const isAdminEmail = user.email.toLowerCase() === ADMIN_EMAIL.toLowerCase();
-        await createUserDocument(user, {
-          provider: 'google',
-          displayName: user.displayName || user.email.split('@')[0],
-          role: isAdminEmail ? 'admin' : 'user',
-          status: isAdminEmail ? 'approved' : 'pending'
-        });
-        showToast(isAdminEmail ? '¡Bienvenido admin! 👑' : '¡Cuenta creada, esperando aprobación! ⏳', isAdminEmail ? 'success' : 'info');
-      } else {
-        // Si es el admin email pero no es admin aún, ascender
-        if (user.email.toLowerCase() === ADMIN_EMAIL.toLowerCase() && existingData.role !== 'admin') {
-          await updateDoc(doc(db, 'users', user.uid), { role: 'admin', status: 'approved' });
-          showToast('¡Permisos de admin asignados! 👑', 'success');
-        }
-      }
-
-      await logAdminAction('login_google', { email: user.email });
-    } catch (err) {
-      if (err.code !== 'auth/popup-closed-by-user') {
-        showToast(getErrorMessage(err.code), 'error');
-      }
-    } finally {
-      btn.disabled = false;
-    }
-  });
-
-  // Register
+  // ==========================================
+  // REGISTRO
+  // ==========================================
   document.getElementById('register-form').addEventListener('submit', async (e) => {
     e.preventDefault();
     const name = document.getElementById('reg-name').value.trim();
@@ -978,13 +963,17 @@
     const text = document.getElementById('reg-text');
     const spinner = document.getElementById('reg-spinner');
 
+    // El admin email no puede registrarse como usuario normal
+    if (isAdminEmail(email)) {
+      showToast('Ese email es solo para login de admin. Usá "Entrar".', 'error');
+      return;
+    }
+
     btn.disabled = true; text.textContent = 'Creando...'; spinner.classList.remove('hidden');
     try {
       const cred = await createUserWithEmailAndPassword(auth, email, password);
       await updateProfile(cred.user, { displayName: name });
-      await createUserDocument(cred.user, {
-        displayName: name, username, provider: 'email', role: 'user', status: 'pending'
-      });
+      await createUserDocument(cred.user, { displayName: name, username, role: 'user', status: 'pending' });
       showToast('¡Cuenta creada! Esperando aprobación ⏳', 'success');
     } catch (err) {
       showToast(getErrorMessage(err.code), 'error');
@@ -993,13 +982,15 @@
     }
   });
 
-  // Forgot password
+  // ==========================================
+  // RECUPERAR CONTRASEÑA
+  // ==========================================
   document.getElementById('forgot-form').addEventListener('submit', async (e) => {
     e.preventDefault();
     const email = document.getElementById('forgot-email').value.trim();
     try {
       await sendPasswordResetEmail(auth, email);
-      showToast('Email enviado ✉️', 'success');
+      showToast('Email enviado ✉️ Revisá tu bandeja', 'success');
       navigate('login');
     } catch (err) {
       showToast(getErrorMessage(err.code), 'error');
@@ -1016,33 +1007,50 @@
   };
 
   // ==========================================
-  // AUTH STATE OBSERVER
+  // AUTH OBSERVER (el cerebro de la navegación)
   // ==========================================
   onAuthStateChanged(auth, async (user) => {
+    console.log('👤 Auth state:', user?.email || 'sin sesión');
+
     if (user) {
       state.user = user;
-      const userData = await getUserData(user.uid);
+      let userData = await getUserData(user.uid);
+
+      // Si es el admin email pero NO tiene documento, crearlo como admin
       if (!userData) {
-        // Documento no existe, crear (fallback)
-        state.userData = await createUserDocument(user);
+        if (isAdminEmail(user.email)) {
+          console.log('👑 Admin sin documento, creándolo...');
+          userData = await createUserDocument(user, {
+            displayName: 'Admin',
+            username: 'admin',
+            role: 'admin',
+            status: 'approved'
+          });
+        } else {
+          // Usuario normal que somehow no tiene doc (fallback)
+          userData = await createUserDocument(user, { role: 'user', status: 'pending' });
+        }
       } else {
-        state.userData = userData;
-        // Actualizar lastLogin
+        // Actualizar último login
         try { await updateDoc(doc(db, 'users', user.uid), { lastLogin: serverTimestamp() }); } catch (e) {}
       }
 
-      // Decidir pantalla según estado/rol
-      if (state.userData.status === 'pending') {
-        navigate('pending');
-      } else if (state.userData.status === 'banned') {
-        showToast('Tu cuenta está baneada', 'error');
-        await signOut(auth);
-      } else if (state.userData.status === 'suspended') {
-        showToast('Tu cuenta está suspendida', 'error');
-        await signOut(auth);
-      } else if (state.userData.role === 'admin') {
+      // 🔑 Si es el admin email, forzar permisos SIEMPRE (pase lo que pase)
+      userData = await forceAdminIfNeeded(user, userData);
+      state.userData = userData;
+
+      // Navegación
+      if (userData.role === 'admin') {
         navigate('admin');
         adminView('dashboard');
+      } else if (userData.status === 'pending') {
+        navigate('pending');
+      } else if (userData.status === 'banned') {
+        showToast('Tu cuenta está baneada', 'error');
+        await signOut(auth);
+      } else if (userData.status === 'suspended') {
+        showToast('Tu cuenta está suspendida', 'error');
+        await signOut(auth);
       } else {
         navigate('dashboard');
         loadUserDashboard();
@@ -1055,38 +1063,19 @@
   });
 
   // ==========================================
-  // ADMIN LOG
-  // ==========================================
-  async function logAdminAction(action, details = {}) {
-    if (!state.user || !db) return;
-    try {
-      await addDoc(collection(db, 'adminLogs'), {
-        adminId: state.user.uid,
-        adminEmail: state.user.email,
-        action, details, timestamp: serverTimestamp()
-      });
-    } catch (e) { console.error(e); }
-  }
-
-  // ==========================================
   // USER DASHBOARD
   // ==========================================
   async function loadUserDashboard() {
     if (!state.userData) return;
     const u = state.userData;
 
-    // Greeting
-    document.getElementById('user-greeting').textContent = u.displayName.split(' ')[0];
-    document.getElementById('user-avatar-emoji').textContent = u.avatar ? '🙂' : '👤';
+    document.getElementById('user-greeting').textContent = (u.displayName || 'campeón').split(' ')[0];
+    document.getElementById('user-avatar-emoji').textContent = '👤';
 
-    // Tier
     const tiers = { bronze: '🥉 Bronce', silver: '🥈 Plata', gold: '🥇 Oro', platinum: '💎 Platino' };
     document.getElementById('user-tier-badge').textContent = tiers[u.tier] || tiers.bronze;
-
-    // Streak
     document.getElementById('user-streak-badge').textContent = `🔥 ${u.streakDays || 0} días`;
 
-    // Hours
     const balance = u.hoursBalance || 0;
     const total = u.hoursTotal || 50;
     const percent = Math.min(100, (balance / total) * 100);
@@ -1095,21 +1084,15 @@
     document.getElementById('user-hours-progress').style.width = percent + '%';
     document.getElementById('user-hours-header').textContent = balance.toFixed(1);
 
-    // Load user data from subcollections
     try {
       const gamesSnap = await getDocs(collection(db, 'users', u.uid, 'savedGames'));
       document.getElementById('user-games-count').textContent = gamesSnap.size;
 
       const achSnap = await getDocs(collection(db, 'users', u.uid, 'achievements'));
       document.getElementById('user-achievements-count').textContent = achSnap.size;
-    } catch (e) {
-      console.error(e);
-    }
+    } catch (e) { console.error(e); }
 
-    // Promos
     loadUserPromos();
-
-    // Missions (mock)
     renderUserMissions();
   }
 
@@ -1119,7 +1102,7 @@
       const snap = await getDocs(q);
       const container = document.getElementById('user-promos');
       if (snap.empty) {
-        container.innerHTML = '<div class="card min-w-[260px] flex-shrink-0"><p class="text-ink-soft text-sm">No hay promos activas ahora. Volvé más tarde 🎁</p></div>';
+        container.innerHTML = '<div class="card min-w-[260px] flex-shrink-0"><p class="text-ink-soft text-sm">No hay promos activas ahora 🎁</p></div>';
         return;
       }
       container.innerHTML = snap.docs.map(docSnap => {
@@ -1135,16 +1118,14 @@
             </div>
           </div>`;
       }).join('');
-    } catch (e) {
-      console.error(e);
-    }
+    } catch (e) { console.error(e); }
   }
 
   function renderUserMissions() {
     const missions = [
-      { id: 1, title: 'Jugá 3 juegos distintos', reward: '+2 hs', icon: '🎮', done: false },
-      { id: 2, title: 'Vení 3 días esta semana', reward: '+3 hs', icon: '📅', done: true },
-      { id: 3, title: 'Invitá a un amigo', reward: '+5 hs', icon: '🤝', done: false },
+      { title: 'Jugá 3 juegos distintos', reward: '+2 hs', icon: '🎮', done: false },
+      { title: 'Vení 3 días esta semana', reward: '+3 hs', icon: '📅', done: true },
+      { title: 'Invitá a un amigo', reward: '+5 hs', icon: '🤝', done: false },
     ];
     const done = missions.filter(m => m.done).length;
     document.getElementById('missions-progress').textContent = `${done}/${missions.length}`;
@@ -1167,7 +1148,6 @@
   async function loadAdminDashboard() {
     if (!db) return;
     try {
-      // Usuarios
       const usersSnap = await getDocs(collection(db, 'users'));
       const users = usersSnap.docs.map(d => ({ id: d.id, ...d.data() }));
       state.users = users;
@@ -1189,12 +1169,10 @@
         pendingBadge.classList.add('hidden');
       }
 
-      // Promos activas
       const promosSnap = await getDocs(query(collection(db, 'promos'), where('active', '==', true)));
       document.getElementById('metric-promos').textContent = promosSnap.size;
       state.promos = promosSnap.docs.map(d => ({ id: d.id, ...d.data() }));
 
-      // Top 5 users
       const topUsers = [...users].sort((a,b) => (b.totalHoursPlayed||0) - (a.totalHoursPlayed||0)).slice(0, 5);
       document.getElementById('top-users').innerHTML = topUsers.length ? topUsers.map((u, i) => `
         <div class="flex items-center gap-3">
@@ -1206,7 +1184,6 @@
         </div>
       `).join('') : '<p class="text-ink-soft">Sin datos</p>';
 
-      // Pendientes
       const pendingUsers = users.filter(u => u.status === 'pending');
       document.getElementById('pending-users-list').innerHTML = pendingUsers.length ? pendingUsers.map(u => `
         <div class="flex items-center gap-3 p-3 rounded-xl bg-surface-elevated">
@@ -1218,9 +1195,7 @@
           <button onclick="approveUser('${u.uid}')" class="btn btn-primary text-xs px-3 py-1.5">Aprobar</button>
         </div>
       `).join('') : '<p class="text-ink-soft">No hay usuarios pendientes ✨</p>';
-    } catch (e) {
-      console.error(e);
-    }
+    } catch (e) { console.error(e); }
   }
 
   // ==========================================
@@ -1527,7 +1502,7 @@
   };
 
   // ==========================================
-  // SERVICE WORKER REGISTER
+  // SERVICE WORKER
   // ==========================================
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', async () => {
@@ -1540,20 +1515,23 @@
     });
   }
 
-  // Initial splash timeout fallback
+  // Splash timeout fallback
   setTimeout(() => {
-    if (state.currentScreen === 'splash' && !firebaseConfig.apiKey.startsWith('YOUR')) {
-      // Firebase está configurado, el observer maneja el redirect
-    } else if (state.currentScreen === 'splash') {
-      // Sin config, mostrar login igual
+    if (state.currentScreen === 'splash') {
       navigate('login');
-      showToast('⚠️ Configurá Firebase en el código', 'info');
     }
   }, 5000);
 
-  // Expose to window for inline handlers
-  window.adminView = adminView;
-  window.renderUsers = renderUsers;
+  // Comandos de emergencia (consola del navegador)
+  window.debugAuth = async function() {
+    const user = auth.currentUser;
+    if (!user) return console.log('❌ Sin sesión');
+    const data = await getUserData(user.uid);
+    console.log('Email:', user.email);
+    console.log('UID:', user.uid);
+    console.log('Firestore data:', data);
+    console.log('Es admin email:', isAdminEmail(user.email));
+  };
 </script>
 </body>
 </html>
