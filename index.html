@@ -66,17 +66,14 @@
     body { padding-bottom: env(safe-area-inset-bottom); }
     .font-mono { font-family: 'JetBrains Mono', monospace; }
 
-    /* Scrollbar custom */
     ::-webkit-scrollbar { width: 8px; height: 8px; }
     ::-webkit-scrollbar-track { background: #0E0E10; }
     ::-webkit-scrollbar-thumb { background: #3f3f46; border-radius: 4px; }
     ::-webkit-scrollbar-thumb:hover { background: #FF5F00; }
 
-    /* Glass */
     .glass { background: rgba(42, 42, 46, 0.6); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.06); }
     .glass-strong { background: rgba(14, 14, 16, 0.85); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); }
 
-    /* Gradient accents */
     .gradient-accent { background: linear-gradient(135deg, #FF5F00 0%, #FF8C42 100%); }
     .gradient-accent-text { background: linear-gradient(135deg, #FF5F00 0%, #FF8C42 100%); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
     .gradient-border { position: relative; }
@@ -87,11 +84,9 @@
       -webkit-mask-composite: xor; mask-composite: exclude; pointer-events: none;
     }
 
-    /* Screen management */
     .screen { display: none; min-height: 100dvh; }
     .screen.active { display: flex; flex-direction: column; animation: fadeIn 0.3s ease-out; }
 
-    /* Button base */
     .btn { display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; padding: 0.875rem 1.5rem; border-radius: 1rem; font-weight: 600; font-size: 0.95rem; transition: all 0.2s ease; cursor: pointer; white-space: nowrap; }
     .btn:active { transform: scale(0.97); }
     .btn-primary { background: linear-gradient(135deg, #FF5F00 0%, #FF8C42 100%); color: white; box-shadow: 0 4px 14px rgba(255, 95, 0, 0.3); }
@@ -104,16 +99,13 @@
     .btn-danger:hover { background: #991b1b; }
     .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
 
-    /* Input base */
     .input { width: 100%; background: #2a2a2e; border: 1px solid #3f3f46; border-radius: 1rem; padding: 0.875rem 1rem; color: #FAFAFA; font-size: 0.95rem; transition: all 0.2s; }
     .input:focus { outline: none; border-color: #FF5F00; box-shadow: 0 0 0 3px rgba(255, 95, 0, 0.15); }
     .input::placeholder { color: #71717a; }
 
-    /* Card */
     .card { background: #2a2a2e; border: 1px solid #3f3f46; border-radius: 1.5rem; padding: 1.5rem; transition: all 0.2s; }
     .card-hover:hover { border-color: #FF5F00; transform: translateY(-2px); }
 
-    /* Badge */
     .badge { display: inline-flex; align-items: center; gap: 0.25rem; padding: 0.25rem 0.75rem; border-radius: 999px; font-size: 0.75rem; font-weight: 600; }
     .badge-success { background: rgba(34, 197, 94, 0.15); color: #4ade80; }
     .badge-warning { background: rgba(250, 204, 21, 0.15); color: #facc15; }
@@ -121,28 +113,22 @@
     .badge-info { background: rgba(255, 95, 0, 0.15); color: #FF8C42; }
     .badge-neutral { background: #3f3f46; color: #FAFAFA; }
 
-    /* Toast */
     .toast { position: fixed; top: 1rem; right: 1rem; z-index: 9999; padding: 1rem 1.25rem; border-radius: 1rem; font-weight: 500; font-size: 0.9rem; animation: slideUp 0.3s ease-out; max-width: calc(100% - 2rem); }
     .toast-success { background: rgba(34, 197, 94, 0.95); color: white; }
     .toast-error { background: rgba(239, 68, 68, 0.95); color: white; }
     .toast-info { background: rgba(255, 95, 0, 0.95); color: white; }
 
-    /* Spinner */
     .spinner { width: 20px; height: 20px; border: 2px solid rgba(255,255,255,0.2); border-top-color: #FF5F00; border-radius: 50%; animation: spin 0.8s linear infinite; }
 
-    /* Hide scrollbar on mobile horizontal lists */
     .scroll-snap { scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch; }
     .scroll-snap > * { scroll-snap-align: start; }
 
-    /* Bottom nav safe area */
     .bottom-nav { padding-bottom: calc(0.75rem + env(safe-area-inset-bottom)); }
   </style>
 </head>
 <body class="dark antialiased">
 
-<!-- ============================================ -->
-<!-- SPLASH SCREEN -->
-<!-- ============================================ -->
+<!-- SPLASH -->
 <div id="splash" class="screen active items-center justify-center bg-surface-base">
   <div class="flex flex-col items-center gap-6 animate-fade-in">
     <div class="w-24 h-24 gradient-accent rounded-4xl flex items-center justify-center shadow-2xl animate-pulse-soft">
@@ -163,9 +149,7 @@
   </div>
 </div>
 
-<!-- ============================================ -->
-<!-- LOGIN SCREEN -->
-<!-- ============================================ -->
+<!-- LOGIN -->
 <div id="login" class="screen bg-surface-base">
   <div class="flex-1 flex flex-col justify-center p-6 md:p-12 max-w-md mx-auto w-full">
     <div class="mb-10 text-center animate-slide-up">
@@ -213,9 +197,7 @@
   </div>
 </div>
 
-<!-- ============================================ -->
-<!-- REGISTER SCREEN -->
-<!-- ============================================ -->
+<!-- REGISTER -->
 <div id="register" class="screen bg-surface-base">
   <div class="flex-1 flex flex-col justify-center p-6 md:p-12 max-w-md mx-auto w-full">
     <div class="mb-8 text-center animate-slide-up">
@@ -255,9 +237,7 @@
   </div>
 </div>
 
-<!-- ============================================ -->
-<!-- PENDING APPROVAL SCREEN -->
-<!-- ============================================ -->
+<!-- PENDING -->
 <div id="pending" class="screen bg-surface-base">
   <div class="flex-1 flex flex-col items-center justify-center p-6 text-center">
     <div class="w-24 h-24 gradient-accent rounded-full flex items-center justify-center mb-6 animate-pulse-soft">
@@ -296,9 +276,7 @@
   </div>
 </div>
 
-<!-- ============================================ -->
-<!-- FORGOT PASSWORD SCREEN -->
-<!-- ============================================ -->
+<!-- FORGOT -->
 <div id="forgot" class="screen bg-surface-base">
   <div class="flex-1 flex flex-col justify-center p-6 max-w-md mx-auto w-full">
     <button onclick="navigate('login')" class="btn btn-ghost self-start mb-6">← Volver</button>
@@ -311,9 +289,7 @@
   </div>
 </div>
 
-<!-- ============================================ -->
 <!-- USER DASHBOARD -->
-<!-- ============================================ -->
 <div id="dashboard" class="screen bg-surface-base">
   <header class="sticky top-0 z-40 glass-strong border-b border-surface-elevated2 px-4 py-3">
     <div class="flex items-center justify-between max-w-5xl mx-auto">
@@ -327,7 +303,7 @@
       </div>
       <div class="flex items-center gap-2">
         <div class="text-right hidden sm:block">
-          <p class="text-xs text-ink-soft" id="user-hours-label">Horas disponibles</p>
+          <p class="text-xs text-ink-soft">Horas disponibles</p>
           <p class="font-bold font-mono text-sm" id="user-hours-header">0.0</p>
         </div>
         <button onclick="navigate('profile')" class="w-9 h-9 rounded-xl bg-surface-elevated flex items-center justify-center hover:bg-surface-elevated2">
@@ -338,7 +314,6 @@
   </header>
 
   <main class="flex-1 p-4 md:p-6 max-w-5xl mx-auto w-full pb-24">
-    <!-- Greeting -->
     <section class="mb-6 animate-slide-up">
       <p class="text-ink-soft text-sm">Bienvenido de vuelta,</p>
       <h1 class="text-3xl font-bold mt-1">
@@ -350,7 +325,6 @@
       </div>
     </section>
 
-    <!-- Hours card (featured) -->
     <section class="card gradient-accent text-white mb-4 relative overflow-hidden animate-slide-up">
       <div class="absolute top-0 right-0 w-48 h-48 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/4"></div>
       <div class="relative">
@@ -366,7 +340,6 @@
       </div>
     </section>
 
-    <!-- Bento grid -->
     <section class="grid grid-cols-2 gap-3 mb-4">
       <div onclick="navigate('saved-games')" class="card card-hover cursor-pointer animate-slide-up">
         <div class="flex items-start justify-between mb-3">
@@ -405,14 +378,12 @@
       </div>
     </section>
 
-    <!-- Quick action -->
     <section class="mb-6 animate-slide-up">
       <button onclick="navigate('reservations')" class="btn btn-primary w-full py-4 text-base">
         🎯 Reservar máquina ahora
       </button>
     </section>
 
-    <!-- Promos -->
     <section class="mb-6 animate-slide-up">
       <div class="flex items-center justify-between mb-3">
         <h2 class="text-xl font-bold">🎁 Promos para vos</h2>
@@ -425,7 +396,6 @@
       </div>
     </section>
 
-    <!-- Missions -->
     <section class="mb-6 animate-slide-up">
       <div class="flex items-center justify-between mb-3">
         <h2 class="text-xl font-bold">🎯 Misiones de la semana</h2>
@@ -435,7 +405,6 @@
     </section>
   </main>
 
-  <!-- Bottom navigation (user) -->
   <nav class="fixed bottom-0 left-0 right-0 glass-strong border-t border-surface-elevated2 bottom-nav z-30">
     <div class="max-w-5xl mx-auto flex justify-around py-2">
       <button onclick="navigate('dashboard')" data-nav="dashboard" class="nav-btn flex flex-col items-center gap-1 px-4 py-2 text-ink-soft hover:text-accent transition">
@@ -457,12 +426,9 @@
   </nav>
 </div>
 
-<!-- ============================================ -->
-<!-- ADMIN DASHBOARD -->
-<!-- ============================================ -->
+<!-- ADMIN -->
 <div id="admin" class="screen bg-surface-base">
   <div class="flex min-h-screen">
-    <!-- Sidebar -->
     <aside class="w-64 glass-strong border-r border-surface-elevated2 p-4 hidden md:flex flex-col">
       <div class="flex items-center gap-3 mb-8">
         <div class="w-10 h-10 gradient-accent rounded-xl flex items-center justify-center">
@@ -518,14 +484,12 @@
       </div>
     </aside>
 
-    <!-- Mobile header -->
     <div class="flex-1 flex flex-col">
       <header class="md:hidden glass-strong border-b border-surface-elevated2 px-4 py-3 flex items-center justify-between">
         <span class="font-bold gradient-accent-text">ADMIN</span>
         <button onclick="toggleMobileMenu()" class="w-9 h-9 rounded-xl bg-surface-elevated">☰</button>
       </header>
 
-      <!-- Mobile menu -->
       <div id="mobile-menu" class="hidden md:hidden glass-strong p-4 space-y-1">
         <button onclick="adminView('dashboard'); toggleMobileMenu();" class="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-left text-sm font-medium">📊 Dashboard</button>
         <button onclick="adminView('users'); toggleMobileMenu();" class="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-left text-sm font-medium">👥 Usuarios</button>
@@ -536,7 +500,6 @@
       </div>
 
       <main class="flex-1 p-4 md:p-8 overflow-y-auto">
-        <!-- Admin Dashboard view -->
         <div id="admin-view-dashboard">
           <div class="flex items-center justify-between mb-6">
             <div>
@@ -599,7 +562,6 @@
           </div>
         </div>
 
-        <!-- Admin Users view -->
         <div id="admin-view-users" class="hidden">
           <div class="flex items-center justify-between mb-6 flex-wrap gap-3">
             <div>
@@ -636,7 +598,6 @@
           </div>
         </div>
 
-        <!-- Admin Promos view -->
         <div id="admin-view-promos" class="hidden">
           <div class="flex items-center justify-between mb-6 flex-wrap gap-3">
             <div>
@@ -648,7 +609,6 @@
           <div id="admin-promos-list" class="grid md:grid-cols-2 gap-3"></div>
         </div>
 
-        <!-- Admin Achievements view -->
         <div id="admin-view-achievements" class="hidden">
           <div class="flex items-center justify-between mb-6 flex-wrap gap-3">
             <div>
@@ -660,7 +620,6 @@
           <div id="admin-achievements-list" class="grid md:grid-cols-2 lg:grid-cols-3 gap-3"></div>
         </div>
 
-        <!-- Admin News view -->
         <div id="admin-view-news" class="hidden">
           <div class="flex items-center justify-between mb-6 flex-wrap gap-3">
             <div>
@@ -672,7 +631,6 @@
           <div id="admin-news-list" class="space-y-3"></div>
         </div>
 
-        <!-- Admin Shop view -->
         <div id="admin-view-shop" class="hidden">
           <div class="flex items-center justify-between mb-6">
             <div>
@@ -683,7 +641,6 @@
           <div id="admin-shop-list" class="grid md:grid-cols-2 lg:grid-cols-3 gap-3"></div>
         </div>
 
-        <!-- Admin Reservations view -->
         <div id="admin-view-reservations" class="hidden">
           <div class="mb-6">
             <h1 class="text-3xl font-bold">Reservas</h1>
@@ -692,7 +649,6 @@
           <div id="admin-reservations-list" class="space-y-2"></div>
         </div>
 
-        <!-- Admin Logs view -->
         <div id="admin-view-logs" class="hidden">
           <div class="mb-6">
             <h1 class="text-3xl font-bold">Logs de actividad</h1>
@@ -705,23 +661,15 @@
   </div>
 </div>
 
-<!-- ============================================ -->
-<!-- MODAL CONTAINER -->
-<!-- ============================================ -->
+<!-- MODAL -->
 <div id="modal-overlay" class="hidden fixed inset-0 z-50 glass-strong flex items-end md:items-center justify-center p-0 md:p-4" onclick="if(event.target===this) closeModal()">
   <div id="modal-content" class="bg-surface-base border border-surface-elevated2 rounded-t-3xl md:rounded-3xl w-full max-w-lg max-h-[90vh] overflow-y-auto p-6 animate-slide-up"></div>
 </div>
 
-<!-- Toast container -->
 <div id="toast-container" class="fixed top-4 right-4 z-[9999] space-y-2 pointer-events-none"></div>
 
-<!-- ============================================ -->
-<!-- APP LOGIC -->
-<!-- ============================================ -->
 <script type="module">
-  // ==========================================
-  // 🔥 FIREBASE CONFIG - TUS CREDENCIALES
-  // ==========================================
+  // 🔥 FIREBASE CONFIG
   const firebaseConfig = {
     apiKey: "AIzaSyDWKe6doLG0wTM3omZK9aNGh6dq6DX-K5U",
     authDomain: "areavirtual-365d7.firebaseapp.com",
@@ -731,12 +679,8 @@
     appId: "1:829438788161:web:3dd7d1bbab2e245ee27cc0"
   };
 
-  // El único email que tiene permisos de admin
   const ADMIN_EMAIL = "demiancepeda2005@gmail.com";
 
-  // ==========================================
-  // IMPORTS
-  // ==========================================
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-app.js";
   import {
     getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword,
@@ -748,9 +692,6 @@
     collection, query, where, orderBy, limit, serverTimestamp, addDoc
   } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-firestore.js";
 
-  // ==========================================
-  // INIT
-  // ==========================================
   let app, auth, db;
   try {
     app = initializeApp(firebaseConfig);
@@ -760,24 +701,12 @@
     console.error("Firebase init error:", err);
   }
 
-  // ==========================================
-  // STATE
-  // ==========================================
   const state = {
-    user: null,
-    userData: null,
-    currentScreen: 'splash',
-    adminView: 'dashboard',
-    users: [],
-    promos: [],
-    achievements: [],
-    news: [],
-    userFilter: 'all',
+    user: null, userData: null, currentScreen: 'splash',
+    adminView: 'dashboard', users: [], promos: [],
+    achievements: [], news: [], userFilter: 'all',
   };
 
-  // ==========================================
-  // UI HELPERS
-  // ==========================================
   window.navigate = function(screen) {
     document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
     const el = document.getElementById(screen);
@@ -839,9 +768,6 @@
     document.getElementById('modal-overlay').classList.add('hidden');
   };
 
-  // ==========================================
-  // HELPERS
-  // ==========================================
   function generateReferralCode() {
     return Math.random().toString(36).substring(2, 8).toUpperCase();
   }
@@ -899,7 +825,6 @@
     return snap.exists() ? snap.data() : null;
   }
 
-  // 🔑 Fuerza el admin si el email corresponde (aunque el documento esté en "pending" u otro rol)
   async function forceAdminIfNeeded(firebaseUser, userData) {
     if (!isAdminEmail(firebaseUser.email)) return userData;
     if (userData.role === 'admin' && userData.status === 'approved') return userData;
@@ -927,9 +852,7 @@
     } catch (e) { console.error(e); }
   }
 
-  // ==========================================
-  // LOGIN (email/password)
-  // ==========================================
+  // LOGIN
   document.getElementById('login-form').addEventListener('submit', async (e) => {
     e.preventDefault();
     const email = document.getElementById('login-email').value.trim();
@@ -950,9 +873,7 @@
     }
   });
 
-  // ==========================================
-  // REGISTRO
-  // ==========================================
+  // REGISTRO - SIN BLOQUEO PARA ADMIN EMAIL
   document.getElementById('register-form').addEventListener('submit', async (e) => {
     e.preventDefault();
     const name = document.getElementById('reg-name').value.trim();
@@ -963,18 +884,20 @@
     const text = document.getElementById('reg-text');
     const spinner = document.getElementById('reg-spinner');
 
-    // El admin email no puede registrarse como usuario normal
-    if (isAdminEmail(email)) {
-      showToast('Ese email es solo para login de admin. Usá "Entrar".', 'error');
-      return;
-    }
-
     btn.disabled = true; text.textContent = 'Creando...'; spinner.classList.remove('hidden');
     try {
       const cred = await createUserWithEmailAndPassword(auth, email, password);
       await updateProfile(cred.user, { displayName: name });
-      await createUserDocument(cred.user, { displayName: name, username, role: 'user', status: 'pending' });
-      showToast('¡Cuenta creada! Esperando aprobación ⏳', 'success');
+      // La magia está acá: createUserDocument detecta el admin email y lo crea como admin
+      const userData = await createUserDocument(cred.user, {
+        displayName: name, username, role: 'user', status: 'pending'
+      });
+      
+      if (isAdminEmail(email)) {
+        showToast('¡Bienvenido admin! 👑 Cuenta creada con permisos completos', 'success');
+      } else {
+        showToast('¡Cuenta creada! Esperando aprobación ⏳', 'success');
+      }
     } catch (err) {
       showToast(getErrorMessage(err.code), 'error');
     } finally {
@@ -982,9 +905,7 @@
     }
   });
 
-  // ==========================================
-  // RECUPERAR CONTRASEÑA
-  // ==========================================
+  // FORGOT
   document.getElementById('forgot-form').addEventListener('submit', async (e) => {
     e.preventDefault();
     const email = document.getElementById('forgot-email').value.trim();
@@ -1006,9 +927,7 @@
     }
   };
 
-  // ==========================================
-  // AUTH OBSERVER (el cerebro de la navegación)
-  // ==========================================
+  // AUTH OBSERVER
   onAuthStateChanged(auth, async (user) => {
     console.log('👤 Auth state:', user?.email || 'sin sesión');
 
@@ -1016,30 +935,26 @@
       state.user = user;
       let userData = await getUserData(user.uid);
 
-      // Si es el admin email pero NO tiene documento, crearlo como admin
       if (!userData) {
         if (isAdminEmail(user.email)) {
           console.log('👑 Admin sin documento, creándolo...');
           userData = await createUserDocument(user, {
-            displayName: 'Admin',
-            username: 'admin',
-            role: 'admin',
-            status: 'approved'
+            displayName: 'Admin', username: 'admin', role: 'admin', status: 'approved'
           });
         } else {
-          // Usuario normal que somehow no tiene doc (fallback)
           userData = await createUserDocument(user, { role: 'user', status: 'pending' });
         }
       } else {
-        // Actualizar último login
         try { await updateDoc(doc(db, 'users', user.uid), { lastLogin: serverTimestamp() }); } catch (e) {}
       }
 
-      // 🔑 Si es el admin email, forzar permisos SIEMPRE (pase lo que pase)
       userData = await forceAdminIfNeeded(user, userData);
       state.userData = userData;
 
-      // Navegación
+      // Actualizar nombre admin en sidebar
+      const adminNameEl = document.getElementById('admin-user-name');
+      if (adminNameEl) adminNameEl.textContent = userData.displayName || 'Admin';
+
       if (userData.role === 'admin') {
         navigate('admin');
         adminView('dashboard');
@@ -1062,9 +977,7 @@
     }
   });
 
-  // ==========================================
   // USER DASHBOARD
-  // ==========================================
   async function loadUserDashboard() {
     if (!state.userData) return;
     const u = state.userData;
@@ -1142,9 +1055,7 @@
     `).join('');
   }
 
-  // ==========================================
   // ADMIN DASHBOARD
-  // ==========================================
   async function loadAdminDashboard() {
     if (!db) return;
     try {
@@ -1198,9 +1109,7 @@
     } catch (e) { console.error(e); }
   }
 
-  // ==========================================
-  // USERS MANAGEMENT
-  // ==========================================
+  // USERS
   window.filterUsers = function(filter) {
     state.userFilter = filter;
     document.querySelectorAll('.user-filter-btn').forEach(b => {
@@ -1304,9 +1213,7 @@
     } catch (e) { showToast('Error', 'error'); }
   };
 
-  // ==========================================
   // PROMOS
-  // ==========================================
   window.openPromoModal = function(promo = null) {
     openModal(`
       <h2 class="text-2xl font-bold mb-4">${promo ? 'Editar' : 'Nueva'} promo 🎁</h2>
@@ -1327,7 +1234,7 @@
         <button type="submit" class="btn btn-primary w-full">Guardar promo</button>
       </form>
     `);
-    document.getElementById('promo-form').addEventListener('submit', async (e) => {
+    document.getElementById('promo-form')?.addEventListener('submit', async (e) => {
       e.preventDefault();
       const fd = new FormData(e.target);
       const data = Object.fromEntries(fd);
@@ -1380,9 +1287,7 @@
     } catch (e) { showToast('Error', 'error'); }
   };
 
-  // ==========================================
   // ACHIEVEMENTS
-  // ==========================================
   window.openAchievementModal = function() {
     openModal(`
       <h2 class="text-2xl font-bold mb-4">Nuevo logro 🏆</h2>
@@ -1401,7 +1306,7 @@
         <button type="submit" class="btn btn-primary w-full">Crear logro</button>
       </form>
     `);
-    document.getElementById('ach-form').addEventListener('submit', async (e) => {
+    document.getElementById('ach-form')?.addEventListener('submit', async (e) => {
       e.preventDefault();
       const fd = new FormData(e.target);
       const data = Object.fromEntries(fd);
@@ -1430,9 +1335,7 @@
     } catch (e) { console.error(e); }
   };
 
-  // ==========================================
   // NEWS
-  // ==========================================
   window.openNewsModal = function() {
     openModal(`
       <h2 class="text-2xl font-bold mb-4">Nueva noticia 📰</h2>
@@ -1446,7 +1349,7 @@
         <button type="submit" class="btn btn-primary w-full">Publicar</button>
       </form>
     `);
-    document.getElementById('news-form').addEventListener('submit', async (e) => {
+    document.getElementById('news-form')?.addEventListener('submit', async (e) => {
       e.preventDefault();
       const fd = new FormData(e.target);
       const data = Object.fromEntries(fd);
@@ -1501,9 +1404,7 @@
     } catch (e) { console.error(e); }
   };
 
-  // ==========================================
-  // SERVICE WORKER
-  // ==========================================
+  // SW
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', async () => {
       try {
@@ -1515,14 +1416,12 @@
     });
   }
 
-  // Splash timeout fallback
   setTimeout(() => {
     if (state.currentScreen === 'splash') {
       navigate('login');
     }
   }, 5000);
 
-  // Comandos de emergencia (consola del navegador)
   window.debugAuth = async function() {
     const user = auth.currentUser;
     if (!user) return console.log('❌ Sin sesión');
