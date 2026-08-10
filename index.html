@@ -1,0 +1,1559 @@
+<!DOCTYPE html>
+<html lang="es-AR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#FF5F00" />
+  <meta name="description" content="Área Virtual - Tu club gamer. Reservá máquinas, guardá partidas, accedé a promos exclusivas." />
+  <meta property="og:title" content="Área Virtual - Tu club gamer" />
+  <meta property="og:description" content="El arma secreta de tu ciber favorito." />
+  <meta property="og:image" content="/icon.svg" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Área Virtual" />
+  <link rel="icon" type="image/svg+xml" href="/icon.svg" />
+  <link rel="apple-touch-icon" href="/icon.svg" />
+  <link rel="manifest" href="/manifest.json" />
+  <title>Área Virtual</title>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
+  <!-- Tailwind CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            accent: { DEFAULT: '#FF5F00', soft: '#FF8C42', dark: '#E55500' },
+            surface: {
+              base: '#0E0E10',
+              elevated: '#2a2a2e',
+              elevated2: '#3f3f46',
+            },
+            ink: { DEFAULT: '#FAFAFA', soft: '#a1a1aa' },
+          },
+          fontFamily: {
+            sans: ['Space Grotesk', 'system-ui', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+          },
+          borderRadius: {
+            '4xl': '2rem',
+          },
+          animation: {
+            'fade-in': 'fadeIn 0.4s ease-out',
+            'slide-up': 'slideUp 0.4s ease-out',
+            'pulse-soft': 'pulseSoft 2s infinite',
+            'spin-slow': 'spin 2s linear infinite',
+          },
+          keyframes: {
+            fadeIn: { '0%': { opacity: 0 }, '100%': { opacity: 1 } },
+            slideUp: { '0%': { transform: 'translateY(12px)', opacity: 0 }, '100%': { transform: 'translateY(0)', opacity: 1 } },
+            pulseSoft: { '0%, 100%': { opacity: 1 }, '50%': { opacity: 0.6 } },
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    * { -webkit-tap-highlight-color: transparent; }
+    html, body { font-family: 'Space Grotesk', sans-serif; background: #0E0E10; color: #FAFAFA; overscroll-behavior: none; }
+    body { padding-bottom: env(safe-area-inset-bottom); }
+    .font-mono { font-family: 'JetBrains Mono', monospace; }
+
+    /* Scrollbar custom */
+    ::-webkit-scrollbar { width: 8px; height: 8px; }
+    ::-webkit-scrollbar-track { background: #0E0E10; }
+    ::-webkit-scrollbar-thumb { background: #3f3f46; border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: #FF5F00; }
+
+    /* Glass */
+    .glass { background: rgba(42, 42, 46, 0.6); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.06); }
+    .glass-strong { background: rgba(14, 14, 16, 0.85); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); }
+
+    /* Gradient accents */
+    .gradient-accent { background: linear-gradient(135deg, #FF5F00 0%, #FF8C42 100%); }
+    .gradient-accent-text { background: linear-gradient(135deg, #FF5F00 0%, #FF8C42 100%); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
+    .gradient-border { position: relative; }
+    .gradient-border::before {
+      content: ''; position: absolute; inset: 0; padding: 1px;
+      background: linear-gradient(135deg, #FF5F00 0%, #FF8C42 100%);
+      border-radius: inherit; -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor; mask-composite: exclude; pointer-events: none;
+    }
+
+    /* Screen management */
+    .screen { display: none; min-height: 100dvh; }
+    .screen.active { display: flex; flex-direction: column; animation: fadeIn 0.3s ease-out; }
+
+    /* Button base */
+    .btn { display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; padding: 0.875rem 1.5rem; border-radius: 1rem; font-weight: 600; font-size: 0.95rem; transition: all 0.2s ease; cursor: pointer; white-space: nowrap; }
+    .btn:active { transform: scale(0.97); }
+    .btn-primary { background: linear-gradient(135deg, #FF5F00 0%, #FF8C42 100%); color: white; box-shadow: 0 4px 14px rgba(255, 95, 0, 0.3); }
+    .btn-primary:hover { box-shadow: 0 6px 20px rgba(255, 95, 0, 0.45); transform: translateY(-1px); }
+    .btn-secondary { background: #2a2a2e; color: #FAFAFA; border: 1px solid #3f3f46; }
+    .btn-secondary:hover { background: #3f3f46; }
+    .btn-ghost { background: transparent; color: #FAFAFA; }
+    .btn-ghost:hover { background: #2a2a2e; }
+    .btn-danger { background: #7f1d1d; color: #FAFAFA; }
+    .btn-danger:hover { background: #991b1b; }
+    .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+    /* Input base */
+    .input { width: 100%; background: #2a2a2e; border: 1px solid #3f3f46; border-radius: 1rem; padding: 0.875rem 1rem; color: #FAFAFA; font-size: 0.95rem; transition: all 0.2s; }
+    .input:focus { outline: none; border-color: #FF5F00; box-shadow: 0 0 0 3px rgba(255, 95, 0, 0.15); }
+    .input::placeholder { color: #71717a; }
+
+    /* Card */
+    .card { background: #2a2a2e; border: 1px solid #3f3f46; border-radius: 1.5rem; padding: 1.5rem; transition: all 0.2s; }
+    .card-hover:hover { border-color: #FF5F00; transform: translateY(-2px); }
+
+    /* Badge */
+    .badge { display: inline-flex; align-items: center; gap: 0.25rem; padding: 0.25rem 0.75rem; border-radius: 999px; font-size: 0.75rem; font-weight: 600; }
+    .badge-success { background: rgba(34, 197, 94, 0.15); color: #4ade80; }
+    .badge-warning { background: rgba(250, 204, 21, 0.15); color: #facc15; }
+    .badge-danger { background: rgba(239, 68, 68, 0.15); color: #f87171; }
+    .badge-info { background: rgba(255, 95, 0, 0.15); color: #FF8C42; }
+    .badge-neutral { background: #3f3f46; color: #FAFAFA; }
+
+    /* Toast */
+    .toast { position: fixed; top: 1rem; right: 1rem; z-index: 9999; padding: 1rem 1.25rem; border-radius: 1rem; font-weight: 500; font-size: 0.9rem; animation: slideUp 0.3s ease-out; max-width: calc(100% - 2rem); }
+    .toast-success { background: rgba(34, 197, 94, 0.95); color: white; }
+    .toast-error { background: rgba(239, 68, 68, 0.95); color: white; }
+    .toast-info { background: rgba(255, 95, 0, 0.95); color: white; }
+
+    /* Spinner */
+    .spinner { width: 20px; height: 20px; border: 2px solid rgba(255,255,255,0.2); border-top-color: #FF5F00; border-radius: 50%; animation: spin 0.8s linear infinite; }
+
+    /* Hide scrollbar on mobile horizontal lists */
+    .scroll-snap { scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch; }
+    .scroll-snap > * { scroll-snap-align: start; }
+
+    /* Bottom nav safe area */
+    .bottom-nav { padding-bottom: calc(0.75rem + env(safe-area-inset-bottom)); }
+  </style>
+</head>
+<body class="dark antialiased">
+
+<!-- ============================================ -->
+<!-- SPLASH SCREEN -->
+<!-- ============================================ -->
+<div id="splash" class="screen active items-center justify-center bg-surface-base">
+  <div class="flex flex-col items-center gap-6 animate-fade-in">
+    <div class="w-24 h-24 gradient-accent rounded-4xl flex items-center justify-center shadow-2xl animate-pulse-soft">
+      <svg viewBox="0 0 48 48" class="w-14 h-14" fill="none">
+        <path d="M12 10 L24 38 L36 10" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+        <circle cx="24" cy="38" r="2.5" fill="white"/>
+      </svg>
+    </div>
+    <div class="text-center">
+      <h1 class="text-3xl font-extrabold gradient-accent-text">ÁREA VIRTUAL</h1>
+      <p class="text-ink-soft text-sm mt-1">Tu club gamer</p>
+    </div>
+    <div class="flex gap-1">
+      <span class="w-2 h-2 bg-accent rounded-full animate-bounce" style="animation-delay: 0s"></span>
+      <span class="w-2 h-2 bg-accent rounded-full animate-bounce" style="animation-delay: 0.15s"></span>
+      <span class="w-2 h-2 bg-accent rounded-full animate-bounce" style="animation-delay: 0.3s"></span>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================ -->
+<!-- LOGIN SCREEN -->
+<!-- ============================================ -->
+<div id="login" class="screen bg-surface-base">
+  <div class="flex-1 flex flex-col justify-center p-6 md:p-12 max-w-md mx-auto w-full">
+    <div class="mb-10 text-center animate-slide-up">
+      <div class="inline-flex w-16 h-16 gradient-accent rounded-3xl items-center justify-center mb-5 shadow-xl">
+        <svg viewBox="0 0 48 48" class="w-9 h-9" fill="none">
+          <path d="M12 10 L24 38 L36 10" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="24" cy="38" r="2.5" fill="white"/>
+        </svg>
+      </div>
+      <h1 class="text-3xl font-bold mb-2">Entrá a tu cuenta</h1>
+      <p class="text-ink-soft">Usá las mismas credenciales del ciber 🎮</p>
+    </div>
+
+    <form id="login-form" class="space-y-4 animate-slide-up">
+      <div>
+        <label class="block text-sm font-medium mb-2 text-ink-soft">Email o usuario</label>
+        <input type="text" id="login-email" class="input" placeholder="tu@email.com" required />
+      </div>
+      <div>
+        <label class="block text-sm font-medium mb-2 text-ink-soft">Contraseña</label>
+        <div class="relative">
+          <input type="password" id="login-password" class="input pr-12" placeholder="••••••••" required minlength="6" />
+          <button type="button" class="absolute right-3 top-1/2 -translate-y-1/2 text-ink-soft hover:text-accent" onclick="togglePassword('login-password')">👁</button>
+        </div>
+      </div>
+
+      <div class="flex items-center justify-between text-sm">
+        <label class="flex items-center gap-2 cursor-pointer">
+          <input type="checkbox" id="login-remember" class="accent-accent w-4 h-4" />
+          <span class="text-ink-soft">Recordarme</span>
+        </label>
+        <a href="#" onclick="navigate('forgot'); return false;" class="text-accent hover:text-accent-soft">¿Olvidaste tu contraseña?</a>
+      </div>
+
+      <button type="submit" id="login-submit" class="btn btn-primary w-full mt-4">
+        <span id="login-text">Entrar</span>
+        <span id="login-spinner" class="spinner hidden"></span>
+      </button>
+
+      <div class="relative my-6">
+        <div class="absolute inset-0 flex items-center"><div class="w-full border-t border-surface-elevated2"></div></div>
+        <div class="relative flex justify-center text-xs"><span class="bg-surface-base px-3 text-ink-soft">o continuá con</span></div>
+      </div>
+
+      <button type="button" id="login-google" class="btn btn-secondary w-full">
+        <svg class="w-5 h-5" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+        Continuar con Google
+      </button>
+    </form>
+
+    <p class="text-center text-sm text-ink-soft mt-8">
+      ¿No tenés cuenta?
+      <a href="#" onclick="navigate('register'); return false;" class="text-accent hover:text-accent-soft font-semibold">Registrate acá</a>
+    </p>
+  </div>
+</div>
+
+<!-- ============================================ -->
+<!-- REGISTER SCREEN -->
+<!-- ============================================ -->
+<div id="register" class="screen bg-surface-base">
+  <div class="flex-1 flex flex-col justify-center p-6 md:p-12 max-w-md mx-auto w-full">
+    <div class="mb-8 text-center animate-slide-up">
+      <h1 class="text-3xl font-bold mb-2">Sumate al club</h1>
+      <p class="text-ink-soft">Te aprobamos en menos de 24 hs ⚡</p>
+    </div>
+
+    <form id="register-form" class="space-y-4 animate-slide-up">
+      <div>
+        <label class="block text-sm font-medium mb-2 text-ink-soft">Nombre completo</label>
+        <input type="text" id="reg-name" class="input" placeholder="Juan Pérez" required />
+      </div>
+      <div>
+        <label class="block text-sm font-medium mb-2 text-ink-soft">Usuario</label>
+        <input type="text" id="reg-username" class="input font-mono" placeholder="juanperez" required pattern="[a-zA-Z0-9_]{3,20}" />
+        <p class="text-xs text-ink-soft mt-1">Letras, números y guiones bajos</p>
+      </div>
+      <div>
+        <label class="block text-sm font-medium mb-2 text-ink-soft">Email</label>
+        <input type="email" id="reg-email" class="input" placeholder="tu@email.com" required />
+      </div>
+      <div>
+        <label class="block text-sm font-medium mb-2 text-ink-soft">Contraseña</label>
+        <input type="password" id="reg-password" class="input" placeholder="Mínimo 6 caracteres" required minlength="6" />
+      </div>
+
+      <button type="submit" id="reg-submit" class="btn btn-primary w-full mt-4">
+        <span id="reg-text">Crear cuenta</span>
+        <span id="reg-spinner" class="spinner hidden"></span>
+      </button>
+    </form>
+
+    <p class="text-center text-sm text-ink-soft mt-8">
+      ¿Ya tenés cuenta?
+      <a href="#" onclick="navigate('login'); return false;" class="text-accent hover:text-accent-soft font-semibold">Iniciá sesión</a>
+    </p>
+  </div>
+</div>
+
+<!-- ============================================ -->
+<!-- PENDING APPROVAL SCREEN -->
+<!-- ============================================ -->
+<div id="pending" class="screen bg-surface-base">
+  <div class="flex-1 flex flex-col items-center justify-center p-6 text-center">
+    <div class="w-24 h-24 gradient-accent rounded-full flex items-center justify-center mb-6 animate-pulse-soft">
+      <span class="text-5xl">⏳</span>
+    </div>
+    <h1 class="text-2xl font-bold mb-3">Tu cuenta está en revisión</h1>
+    <p class="text-ink-soft max-w-sm mb-6">
+      ¡Gracias por registrarte! 🎉 Estamos verificando tus datos y en breve vamos a aprobar tu cuenta.
+    </p>
+
+    <div class="card w-full max-w-sm mb-6">
+      <div class="flex items-center gap-3 mb-3">
+        <span class="text-2xl">⏱</span>
+        <div>
+          <p class="font-semibold">Tiempo estimado</p>
+          <p class="text-sm text-ink-soft">Hasta 24 horas</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-3 mb-3">
+        <span class="text-2xl">🔔</span>
+        <div>
+          <p class="font-semibold">Te avisamos</p>
+          <p class="text-sm text-ink-soft">Por email y notificación</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-3">
+        <span class="text-2xl">📧</span>
+        <div class="text-left flex-1">
+          <p class="font-semibold">Mientras tanto</p>
+          <p class="text-sm text-ink-soft">Seguinos en <span class="text-accent">@areavirtualciber</span></p>
+        </div>
+      </div>
+    </div>
+
+    <button onclick="logout()" class="btn btn-ghost">Cerrar sesión</button>
+  </div>
+</div>
+
+<!-- ============================================ -->
+<!-- FORGOT PASSWORD SCREEN -->
+<!-- ============================================ -->
+<div id="forgot" class="screen bg-surface-base">
+  <div class="flex-1 flex flex-col justify-center p-6 max-w-md mx-auto w-full">
+    <button onclick="navigate('login')" class="btn btn-ghost self-start mb-6">← Volver</button>
+    <h1 class="text-3xl font-bold mb-3">Recuperá tu contraseña</h1>
+    <p class="text-ink-soft mb-6">Te enviamos un mail con las instrucciones</p>
+    <form id="forgot-form" class="space-y-4">
+      <input type="email" id="forgot-email" class="input" placeholder="tu@email.com" required />
+      <button type="submit" class="btn btn-primary w-full">Enviar link</button>
+    </form>
+  </div>
+</div>
+
+<!-- ============================================ -->
+<!-- USER DASHBOARD -->
+<!-- ============================================ -->
+<div id="dashboard" class="screen bg-surface-base">
+  <header class="sticky top-0 z-40 glass-strong border-b border-surface-elevated2 px-4 py-3">
+    <div class="flex items-center justify-between max-w-5xl mx-auto">
+      <div class="flex items-center gap-3">
+        <div class="w-9 h-9 gradient-accent rounded-xl flex items-center justify-center">
+          <svg viewBox="0 0 48 48" class="w-5 h-5" fill="none">
+            <path d="M12 10 L24 38 L36 10" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <span class="font-bold text-lg gradient-accent-text">ÁREA VIRTUAL</span>
+      </div>
+      <div class="flex items-center gap-2">
+        <div class="text-right hidden sm:block">
+          <p class="text-xs text-ink-soft" id="user-hours-label">Horas disponibles</p>
+          <p class="font-bold font-mono text-sm" id="user-hours-header">0.0</p>
+        </div>
+        <button onclick="navigate('profile')" class="w-9 h-9 rounded-xl bg-surface-elevated flex items-center justify-center hover:bg-surface-elevated2">
+          <span id="user-avatar-emoji">👤</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="flex-1 p-4 md:p-6 max-w-5xl mx-auto w-full pb-24">
+    <!-- Greeting -->
+    <section class="mb-6 animate-slide-up">
+      <p class="text-ink-soft text-sm">Bienvenido de vuelta,</p>
+      <h1 class="text-3xl font-bold mt-1">
+        <span id="user-greeting">campeón</span> 👋
+      </h1>
+      <div class="flex items-center gap-2 mt-2">
+        <span class="badge badge-info" id="user-tier-badge">🥉 Bronce</span>
+        <span class="badge badge-warning" id="user-streak-badge">🔥 0 días</span>
+      </div>
+    </section>
+
+    <!-- Hours card (featured) -->
+    <section class="card gradient-accent text-white mb-4 relative overflow-hidden animate-slide-up">
+      <div class="absolute top-0 right-0 w-48 h-48 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/4"></div>
+      <div class="relative">
+        <div class="flex items-center justify-between mb-3">
+          <p class="text-white/80 text-sm font-medium">⏱ Horas del mes</p>
+          <span class="badge bg-white/20 text-white font-mono" id="user-hours-reset">Renueva: --</span>
+        </div>
+        <p class="text-5xl font-extrabold font-mono mb-1" id="user-hours-balance">0.0</p>
+        <p class="text-white/70 text-sm mb-4">de <span id="user-hours-total">0</span> hs totales</p>
+        <div class="h-2 bg-white/20 rounded-full overflow-hidden">
+          <div id="user-hours-progress" class="h-full bg-white rounded-full transition-all" style="width: 0%"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Bento grid -->
+    <section class="grid grid-cols-2 gap-3 mb-4">
+      <div onclick="navigate('saved-games')" class="card card-hover cursor-pointer animate-slide-up">
+        <div class="flex items-start justify-between mb-3">
+          <span class="text-2xl">🎮</span>
+          <span class="text-ink-soft">→</span>
+        </div>
+        <p class="text-2xl font-bold" id="user-games-count">0</p>
+        <p class="text-sm text-ink-soft">Partidas guardadas</p>
+      </div>
+
+      <div onclick="navigate('achievements')" class="card card-hover cursor-pointer animate-slide-up">
+        <div class="flex items-start justify-between mb-3">
+          <span class="text-2xl">🏆</span>
+          <span class="text-ink-soft">→</span>
+        </div>
+        <p class="text-2xl font-bold" id="user-achievements-count">0</p>
+        <p class="text-sm text-ink-soft">Logros</p>
+      </div>
+
+      <div onclick="navigate('reservations')" class="card card-hover cursor-pointer animate-slide-up">
+        <div class="flex items-start justify-between mb-3">
+          <span class="text-2xl">📅</span>
+          <span class="text-ink-soft">→</span>
+        </div>
+        <p class="text-lg font-bold truncate" id="user-next-reservation">Sin reservas</p>
+        <p class="text-xs text-ink-soft">Próxima reserva</p>
+      </div>
+
+      <div onclick="navigate('shop')" class="card card-hover cursor-pointer animate-slide-up">
+        <div class="flex items-start justify-between mb-3">
+          <span class="text-2xl">🛒</span>
+          <span class="text-ink-soft">→</span>
+        </div>
+        <p class="text-lg font-bold">Kiosco</p>
+        <p class="text-xs text-ink-soft">Snacks y más</p>
+      </div>
+    </section>
+
+    <!-- Quick action -->
+    <section class="mb-6 animate-slide-up">
+      <button onclick="navigate('reservations')" class="btn btn-primary w-full py-4 text-base">
+        🎯 Reservar máquina ahora
+      </button>
+    </section>
+
+    <!-- Promos -->
+    <section class="mb-6 animate-slide-up">
+      <div class="flex items-center justify-between mb-3">
+        <h2 class="text-xl font-bold">🎁 Promos para vos</h2>
+        <button onclick="navigate('promos')" class="text-sm text-accent font-semibold">Ver todas</button>
+      </div>
+      <div id="user-promos" class="flex gap-3 overflow-x-auto scroll-snap pb-2">
+        <div class="card min-w-[260px] flex-shrink-0">
+          <p class="text-ink-soft text-sm">Cargando promos...</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Missions -->
+    <section class="mb-6 animate-slide-up">
+      <div class="flex items-center justify-between mb-3">
+        <h2 class="text-xl font-bold">🎯 Misiones de la semana</h2>
+        <span class="badge badge-info" id="missions-progress">0/0</span>
+      </div>
+      <div id="user-missions" class="space-y-2"></div>
+    </section>
+  </main>
+
+  <!-- Bottom navigation (user) -->
+  <nav class="fixed bottom-0 left-0 right-0 glass-strong border-t border-surface-elevated2 bottom-nav z-30">
+    <div class="max-w-5xl mx-auto flex justify-around py-2">
+      <button onclick="navigate('dashboard')" data-nav="dashboard" class="nav-btn flex flex-col items-center gap-1 px-4 py-2 text-ink-soft hover:text-accent transition">
+        <span class="text-xl">🏠</span><span class="text-xs font-medium">Home</span>
+      </button>
+      <button onclick="navigate('saved-games')" data-nav="saved-games" class="nav-btn flex flex-col items-center gap-1 px-4 py-2 text-ink-soft hover:text-accent transition">
+        <span class="text-xl">🎮</span><span class="text-xs font-medium">Partidas</span>
+      </button>
+      <button onclick="navigate('promos')" data-nav="promos" class="nav-btn flex flex-col items-center gap-1 px-4 py-2 text-ink-soft hover:text-accent transition">
+        <span class="text-xl">🎁</span><span class="text-xs font-medium">Promos</span>
+      </button>
+      <button onclick="navigate('reservations')" data-nav="reservations" class="nav-btn flex flex-col items-center gap-1 px-4 py-2 text-ink-soft hover:text-accent transition">
+        <span class="text-xl">📅</span><span class="text-xs font-medium">Reservas</span>
+      </button>
+      <button onclick="navigate('profile')" data-nav="profile" class="nav-btn flex flex-col items-center gap-1 px-4 py-2 text-ink-soft hover:text-accent transition">
+        <span class="text-xl">👤</span><span class="text-xs font-medium">Perfil</span>
+      </button>
+    </div>
+  </nav>
+</div>
+
+<!-- ============================================ -->
+<!-- ADMIN DASHBOARD -->
+<!-- ============================================ -->
+<div id="admin" class="screen bg-surface-base">
+  <div class="flex min-h-screen">
+    <!-- Sidebar -->
+    <aside class="w-64 glass-strong border-r border-surface-elevated2 p-4 hidden md:flex flex-col">
+      <div class="flex items-center gap-3 mb-8">
+        <div class="w-10 h-10 gradient-accent rounded-xl flex items-center justify-center">
+          <svg viewBox="0 0 48 48" class="w-6 h-6" fill="none">
+            <path d="M12 10 L24 38 L36 10" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <div>
+          <p class="font-bold gradient-accent-text">ÁREA VIRTUAL</p>
+          <p class="text-xs text-ink-soft">Panel admin</p>
+        </div>
+      </div>
+
+      <nav class="flex-1 space-y-1">
+        <button onclick="adminView('dashboard')" data-admin="dashboard" class="admin-nav-btn w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-left text-sm font-medium text-ink-soft hover:bg-surface-elevated transition">
+          <span>📊</span><span>Dashboard</span>
+        </button>
+        <button onclick="adminView('users')" data-admin="users" class="admin-nav-btn w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-left text-sm font-medium text-ink-soft hover:bg-surface-elevated transition">
+          <span>👥</span><span>Usuarios</span>
+          <span id="admin-pending-badge" class="ml-auto badge badge-danger hidden">0</span>
+        </button>
+        <button onclick="adminView('promos')" data-admin="promos" class="admin-nav-btn w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-left text-sm font-medium text-ink-soft hover:bg-surface-elevated transition">
+          <span>🎁</span><span>Promos</span>
+        </button>
+        <button onclick="adminView('achievements')" data-admin="achievements" class="admin-nav-btn w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-left text-sm font-medium text-ink-soft hover:bg-surface-elevated transition">
+          <span>🏆</span><span>Logros</span>
+        </button>
+        <button onclick="adminView('news')" data-admin="news" class="admin-nav-btn w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-left text-sm font-medium text-ink-soft hover:bg-surface-elevated transition">
+          <span>📰</span><span>Noticias</span>
+        </button>
+        <button onclick="adminView('shop')" data-admin="shop" class="admin-nav-btn w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-left text-sm font-medium text-ink-soft hover:bg-surface-elevated transition">
+          <span>🛒</span><span>Kiosco</span>
+        </button>
+        <button onclick="adminView('reservations')" data-admin="reservations" class="admin-nav-btn w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-left text-sm font-medium text-ink-soft hover:bg-surface-elevated transition">
+          <span>📅</span><span>Reservas</span>
+        </button>
+        <button onclick="adminView('logs')" data-admin="logs" class="admin-nav-btn w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-left text-sm font-medium text-ink-soft hover:bg-surface-elevated transition">
+          <span>📋</span><span>Logs</span>
+        </button>
+      </nav>
+
+      <div class="pt-4 border-t border-surface-elevated2 space-y-2">
+        <div class="flex items-center gap-3 px-2">
+          <div class="w-9 h-9 gradient-accent rounded-xl flex items-center justify-center">
+            <span class="text-sm">👑</span>
+          </div>
+          <div class="flex-1 min-w-0">
+            <p class="text-sm font-semibold truncate" id="admin-user-name">Admin</p>
+            <p class="text-xs text-ink-soft truncate">Administrador</p>
+          </div>
+        </div>
+        <button onclick="logout()" class="btn btn-ghost w-full text-sm">Cerrar sesión</button>
+      </div>
+    </aside>
+
+    <!-- Mobile header -->
+    <div class="flex-1 flex flex-col">
+      <header class="md:hidden glass-strong border-b border-surface-elevated2 px-4 py-3 flex items-center justify-between">
+        <span class="font-bold gradient-accent-text">ADMIN</span>
+        <button onclick="toggleMobileMenu()" class="w-9 h-9 rounded-xl bg-surface-elevated">☰</button>
+      </header>
+
+      <!-- Mobile menu -->
+      <div id="mobile-menu" class="hidden md:hidden glass-strong p-4 space-y-1">
+        <button onclick="adminView('dashboard'); toggleMobileMenu();" class="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-left text-sm font-medium">📊 Dashboard</button>
+        <button onclick="adminView('users'); toggleMobileMenu();" class="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-left text-sm font-medium">👥 Usuarios</button>
+        <button onclick="adminView('promos'); toggleMobileMenu();" class="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-left text-sm font-medium">🎁 Promos</button>
+        <button onclick="adminView('achievements'); toggleMobileMenu();" class="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-left text-sm font-medium">🏆 Logros</button>
+        <button onclick="adminView('shop'); toggleMobileMenu();" class="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-left text-sm font-medium">🛒 Kiosco</button>
+        <button onclick="logout()" class="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-left text-sm font-medium text-red-400">🚪 Cerrar sesión</button>
+      </div>
+
+      <main class="flex-1 p-4 md:p-8 overflow-y-auto">
+        <!-- Admin Dashboard view -->
+        <div id="admin-view-dashboard">
+          <div class="flex items-center justify-between mb-6">
+            <div>
+              <h1 class="text-3xl font-bold">Dashboard</h1>
+              <p class="text-ink-soft">Métricas en tiempo real del club</p>
+            </div>
+            <span class="badge badge-success">🟢 En vivo</span>
+          </div>
+
+          <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 mb-6">
+            <div class="card">
+              <p class="text-xs text-ink-soft mb-1">Total usuarios</p>
+              <p class="text-2xl font-bold" id="metric-total-users">0</p>
+            </div>
+            <div class="card">
+              <p class="text-xs text-ink-soft mb-1">Activos hoy</p>
+              <p class="text-2xl font-bold" id="metric-active-today">0</p>
+            </div>
+            <div class="card border-accent">
+              <p class="text-xs text-accent mb-1">⚠️ Pendientes</p>
+              <p class="text-2xl font-bold text-accent" id="metric-pending">0</p>
+            </div>
+            <div class="card">
+              <p class="text-xs text-ink-soft mb-1">Horas hoy</p>
+              <p class="text-2xl font-bold" id="metric-hours-today">0</p>
+            </div>
+            <div class="card">
+              <p class="text-xs text-ink-soft mb-1">Reservas hoy</p>
+              <p class="text-2xl font-bold" id="metric-reservations">0</p>
+            </div>
+            <div class="card">
+              <p class="text-xs text-ink-soft mb-1">Promos activas</p>
+              <p class="text-2xl font-bold" id="metric-promos">0</p>
+            </div>
+          </div>
+
+          <div class="grid md:grid-cols-2 gap-4 mb-6">
+            <div class="card">
+              <h3 class="font-bold mb-4 flex items-center gap-2">⚡ Quick Actions</h3>
+              <div class="space-y-2">
+                <button onclick="adminView('users')" class="w-full btn btn-secondary justify-start">👥 Gestionar usuarios</button>
+                <button onclick="openPromoModal()" class="w-full btn btn-secondary justify-start">🎁 Crear promo</button>
+                <button onclick="openNewsModal()" class="w-full btn btn-secondary justify-start">📰 Publicar noticia</button>
+              </div>
+            </div>
+
+            <div class="card">
+              <h3 class="font-bold mb-4 flex items-center gap-2">🏆 Top 5 usuarios</h3>
+              <div id="top-users" class="space-y-2 text-sm">
+                <p class="text-ink-soft">Cargando...</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <h3 class="font-bold mb-4">👥 Registros pendientes</h3>
+            <div id="pending-users-list" class="space-y-2">
+              <p class="text-ink-soft">Cargando...</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Admin Users view -->
+        <div id="admin-view-users" class="hidden">
+          <div class="flex items-center justify-between mb-6 flex-wrap gap-3">
+            <div>
+              <h1 class="text-3xl font-bold">Usuarios</h1>
+              <p class="text-ink-soft">Gestión completa de miembros</p>
+            </div>
+          </div>
+
+          <div class="flex flex-wrap gap-2 mb-4">
+            <button onclick="filterUsers('all')" data-filter="all" class="user-filter-btn btn btn-secondary text-sm">Todos</button>
+            <button onclick="filterUsers('pending')" data-filter="pending" class="user-filter-btn btn btn-secondary text-sm">🟡 Pendientes</button>
+            <button onclick="filterUsers('approved')" data-filter="approved" class="user-filter-btn btn btn-secondary text-sm">🟢 Aprobados</button>
+            <button onclick="filterUsers('suspended')" data-filter="suspended" class="user-filter-btn btn btn-secondary text-sm">⛔ Suspendidos</button>
+            <button onclick="filterUsers('banned')" data-filter="banned" class="user-filter-btn btn btn-secondary text-sm">🚫 Baneados</button>
+            <input type="text" id="user-search" oninput="renderUsers()" class="input max-w-xs" placeholder="🔍 Buscar..." />
+          </div>
+
+          <div class="card overflow-x-auto">
+            <table class="w-full text-sm">
+              <thead>
+                <tr class="text-left text-ink-soft border-b border-surface-elevated2">
+                  <th class="py-3 px-2">Usuario</th>
+                  <th class="py-3 px-2">Email</th>
+                  <th class="py-3 px-2">Estado</th>
+                  <th class="py-3 px-2">Tier</th>
+                  <th class="py-3 px-2">Horas</th>
+                  <th class="py-3 px-2 text-right">Acciones</th>
+                </tr>
+              </thead>
+              <tbody id="users-table-body">
+                <tr><td colspan="6" class="py-8 text-center text-ink-soft">Cargando...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Admin Promos view -->
+        <div id="admin-view-promos" class="hidden">
+          <div class="flex items-center justify-between mb-6 flex-wrap gap-3">
+            <div>
+              <h1 class="text-3xl font-bold">Promos</h1>
+              <p class="text-ink-soft">Gestión de promociones</p>
+            </div>
+            <button onclick="openPromoModal()" class="btn btn-primary">+ Crear promo</button>
+          </div>
+          <div id="admin-promos-list" class="grid md:grid-cols-2 gap-3"></div>
+        </div>
+
+        <!-- Admin Achievements view -->
+        <div id="admin-view-achievements" class="hidden">
+          <div class="flex items-center justify-between mb-6 flex-wrap gap-3">
+            <div>
+              <h1 class="text-3xl font-bold">Logros</h1>
+              <p class="text-ink-soft">Catálogo de logros</p>
+            </div>
+            <button onclick="openAchievementModal()" class="btn btn-primary">+ Crear logro</button>
+          </div>
+          <div id="admin-achievements-list" class="grid md:grid-cols-2 lg:grid-cols-3 gap-3"></div>
+        </div>
+
+        <!-- Admin News view -->
+        <div id="admin-view-news" class="hidden">
+          <div class="flex items-center justify-between mb-6 flex-wrap gap-3">
+            <div>
+              <h1 class="text-3xl font-bold">Noticias</h1>
+              <p class="text-ink-soft">Anuncios y eventos</p>
+            </div>
+            <button onclick="openNewsModal()" class="btn btn-primary">+ Nueva noticia</button>
+          </div>
+          <div id="admin-news-list" class="space-y-3"></div>
+        </div>
+
+        <!-- Admin Shop view -->
+        <div id="admin-view-shop" class="hidden">
+          <div class="flex items-center justify-between mb-6">
+            <div>
+              <h1 class="text-3xl font-bold">Kiosco</h1>
+              <p class="text-ink-soft">Inventario de productos</p>
+            </div>
+          </div>
+          <div id="admin-shop-list" class="grid md:grid-cols-2 lg:grid-cols-3 gap-3"></div>
+        </div>
+
+        <!-- Admin Reservations view -->
+        <div id="admin-view-reservations" class="hidden">
+          <div class="mb-6">
+            <h1 class="text-3xl font-bold">Reservas</h1>
+            <p class="text-ink-soft">Reservas del día</p>
+          </div>
+          <div id="admin-reservations-list" class="space-y-2"></div>
+        </div>
+
+        <!-- Admin Logs view -->
+        <div id="admin-view-logs" class="hidden">
+          <div class="mb-6">
+            <h1 class="text-3xl font-bold">Logs de actividad</h1>
+            <p class="text-ink-soft">Todas las acciones del sistema</p>
+          </div>
+          <div id="admin-logs-list" class="card space-y-2 text-sm font-mono"></div>
+        </div>
+      </main>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================ -->
+<!-- MODAL CONTAINER -->
+<!-- ============================================ -->
+<div id="modal-overlay" class="hidden fixed inset-0 z-50 glass-strong flex items-end md:items-center justify-center p-0 md:p-4" onclick="if(event.target===this) closeModal()">
+  <div id="modal-content" class="bg-surface-base border border-surface-elevated2 rounded-t-3xl md:rounded-3xl w-full max-w-lg max-h-[90vh] overflow-y-auto p-6 animate-slide-up"></div>
+</div>
+
+<!-- Toast container -->
+<div id="toast-container" class="fixed top-4 right-4 z-[9999] space-y-2 pointer-events-none"></div>
+
+<!-- ============================================ -->
+<!-- APP LOGIC -->
+<!-- ============================================ -->
+<script type="module">
+  // ==========================================
+  // 🔥 FIREBASE CONFIG - REEMPLAZÁ CON TUS CREDENCIALES
+  // ==========================================
+  const firebaseConfig = {
+    apiKey: "AIzaSyDWKe6doLG0wTM3omZK9aNGh6dq6DX-K5U",
+    authDomain: "areavirtual-365d7.firebaseapp.com",
+    projectId: "areavirtual-365d7",
+    storageBucket: "areavirtual-365d7.firebasestorage.app",
+    messagingSenderId: "829438788161",
+    appId: "1:829438788161:web:3dd7d1bbab2e245ee27cc0"
+  };
+
+  // Email que al iniciar sesión con Google obtiene permisos de ADMIN automáticamente
+  const ADMIN_EMAIL = "demiancepeda2005@gmail.com";
+
+  // ==========================================
+  // IMPORTS
+  // ==========================================
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-app.js";
+  import {
+    getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword,
+    signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged,
+    sendPasswordResetEmail, updateProfile, setPersistence, browserLocalPersistence, browserSessionPersistence
+  } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-auth.js";
+  import {
+    getFirestore, doc, setDoc, getDoc, getDocs, updateDoc, deleteDoc,
+    collection, query, where, orderBy, limit, onSnapshot, serverTimestamp, addDoc
+  } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-firestore.js";
+
+  // ==========================================
+  // INIT
+  // ==========================================
+  let app, auth, db;
+  try {
+    app = initializeApp(firebaseConfig);
+    auth = getAuth(app);
+    db = getFirestore(app);
+  } catch (err) {
+    console.error("Firebase init error:", err);
+  }
+
+  // ==========================================
+  // STATE
+  // ==========================================
+  const state = {
+    user: null,            // Firebase user
+    userData: null,        // Firestore user data
+    currentScreen: 'splash',
+    adminView: 'dashboard',
+    users: [],
+    promos: [],
+    achievements: [],
+    news: [],
+    reservations: [],
+    userFilter: 'all',
+  };
+
+  // ==========================================
+  // UI HELPERS
+  // ==========================================
+  window.navigate = function(screen) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    const el = document.getElementById(screen);
+    if (el) {
+      el.classList.add('active');
+      state.currentScreen = screen;
+      // Update nav active states
+      document.querySelectorAll('.nav-btn').forEach(b => {
+        const isActive = b.dataset.nav === screen;
+        b.classList.toggle('text-accent', isActive);
+        b.classList.toggle('text-ink-soft', !isActive);
+      });
+    }
+  };
+
+  window.adminView = function(view) {
+    state.adminView = view;
+    ['dashboard','users','promos','achievements','news','shop','reservations','logs'].forEach(v => {
+      const el = document.getElementById(`admin-view-${v}`);
+      if (el) el.classList.toggle('hidden', v !== view);
+    });
+    document.querySelectorAll('.admin-nav-btn').forEach(b => {
+      const isActive = b.dataset.admin === view;
+      b.classList.toggle('bg-surface-elevated', isActive);
+      b.classList.toggle('text-accent', isActive);
+    });
+    // Load data for view
+    if (view === 'users') renderUsers();
+    if (view === 'promos') renderAdminPromos();
+    if (view === 'achievements') renderAdminAchievements();
+    if (view === 'news') renderAdminNews();
+    if (view === 'shop') renderAdminShop();
+    if (view === 'reservations') renderAdminReservations();
+    if (view === 'logs') renderAdminLogs();
+    if (view === 'dashboard') loadAdminDashboard();
+  };
+
+  window.toggleMobileMenu = function() {
+    document.getElementById('mobile-menu').classList.toggle('hidden');
+  };
+
+  window.togglePassword = function(id) {
+    const input = document.getElementById(id);
+    input.type = input.type === 'password' ? 'text' : 'password';
+  };
+
+  window.showToast = function(message, type = 'info') {
+    const toast = document.createElement('div');
+    toast.className = `toast toast-${type} pointer-events-auto`;
+    toast.textContent = message;
+    document.getElementById('toast-container').appendChild(toast);
+    setTimeout(() => toast.remove(), 3500);
+  };
+
+  window.openModal = function(html) {
+    document.getElementById('modal-content').innerHTML = html;
+    document.getElementById('modal-overlay').classList.remove('hidden');
+  };
+
+  window.closeModal = function() {
+    document.getElementById('modal-overlay').classList.add('hidden');
+  };
+
+  // ==========================================
+  // AUTH
+  // ==========================================
+  function generateReferralCode() {
+    return Math.random().toString(36).substring(2, 8).toUpperCase();
+  }
+
+  function getErrorMessage(code) {
+    const msgs = {
+      'auth/email-already-in-use': 'Este email ya está registrado',
+      'auth/invalid-email': 'Email inválido',
+      'auth/weak-password': 'Contraseña muy débil (mínimo 6 caracteres)',
+      'auth/user-not-found': 'Usuario no encontrado',
+      'auth/wrong-password': 'Contraseña incorrecta',
+      'auth/invalid-credential': 'Credenciales inválidas',
+      'auth/too-many-requests': 'Demasiados intentos, esperá un momento',
+      'auth/network-request-failed': 'Error de conexión'
+    };
+    return msgs[code] || 'Ocurrió un error';
+  }
+
+  async function createUserDocument(firebaseUser, extraData = {}) {
+    const userData = {
+      uid: firebaseUser.uid,
+      email: firebaseUser.email,
+      username: extraData.username || firebaseUser.email.split('@')[0],
+      displayName: extraData.displayName || firebaseUser.displayName || 'Usuario',
+      avatar: firebaseUser.photoURL || null,
+      provider: extraData.provider || 'email',
+      role: extraData.role || 'user',
+      status: extraData.status || 'pending',
+      tier: extraData.tier || 'bronze',
+      hoursBalance: extraData.hoursBalance || 0,
+      hoursTotal: extraData.hoursTotal || 0,
+      totalHoursPlayed: 0,
+      streakDays: 0,
+      referralCode: generateReferralCode(),
+      settings: {
+        notifications: { push: true, email: true, promos: true },
+        privacy: { showProfile: true }
+      },
+      createdAt: serverTimestamp(),
+      lastLogin: serverTimestamp(),
+      ...extraData.overrides
+    };
+    await setDoc(doc(db, 'users', firebaseUser.uid), userData);
+    return userData;
+  }
+
+  async function getUserData(uid) {
+    const snap = await getDoc(doc(db, 'users', uid));
+    return snap.exists() ? snap.data() : null;
+  }
+
+  // Email/Password login
+  document.getElementById('login-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const email = document.getElementById('login-email').value.trim();
+    const password = document.getElementById('login-password').value;
+    const remember = document.getElementById('login-remember').checked;
+    const btn = document.getElementById('login-submit');
+    const text = document.getElementById('login-text');
+    const spinner = document.getElementById('login-spinner');
+
+    btn.disabled = true; text.textContent = 'Entrando...'; spinner.classList.remove('hidden');
+    try {
+      await setPersistence(auth, remember ? browserLocalPersistence : browserSessionPersistence);
+      await signInWithEmailAndPassword(auth, email, password);
+      showToast('¡Bienvenido! 🎮', 'success');
+    } catch (err) {
+      showToast(getErrorMessage(err.code), 'error');
+    } finally {
+      btn.disabled = false; text.textContent = 'Entrar'; spinner.classList.add('hidden');
+    }
+  });
+
+  // Google login (auto-admin si es ADMIN_EMAIL)
+  document.getElementById('login-google').addEventListener('click', async () => {
+    const btn = document.getElementById('login-google');
+    btn.disabled = true;
+    try {
+      const provider = new GoogleAuthProvider();
+      const result = await signInWithPopup(auth, provider);
+      const user = result.user;
+
+      // Verificar si ya existe en Firestore
+      const existingData = await getUserData(user.uid);
+      if (!existingData) {
+        // Es nuevo - crear cuenta
+        const isAdminEmail = user.email.toLowerCase() === ADMIN_EMAIL.toLowerCase();
+        await createUserDocument(user, {
+          provider: 'google',
+          displayName: user.displayName || user.email.split('@')[0],
+          role: isAdminEmail ? 'admin' : 'user',
+          status: isAdminEmail ? 'approved' : 'pending'
+        });
+        showToast(isAdminEmail ? '¡Bienvenido admin! 👑' : '¡Cuenta creada, esperando aprobación! ⏳', isAdminEmail ? 'success' : 'info');
+      } else {
+        // Si es el admin email pero no es admin aún, ascender
+        if (user.email.toLowerCase() === ADMIN_EMAIL.toLowerCase() && existingData.role !== 'admin') {
+          await updateDoc(doc(db, 'users', user.uid), { role: 'admin', status: 'approved' });
+          showToast('¡Permisos de admin asignados! 👑', 'success');
+        }
+      }
+
+      await logAdminAction('login_google', { email: user.email });
+    } catch (err) {
+      if (err.code !== 'auth/popup-closed-by-user') {
+        showToast(getErrorMessage(err.code), 'error');
+      }
+    } finally {
+      btn.disabled = false;
+    }
+  });
+
+  // Register
+  document.getElementById('register-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const name = document.getElementById('reg-name').value.trim();
+    const username = document.getElementById('reg-username').value.trim().toLowerCase();
+    const email = document.getElementById('reg-email').value.trim();
+    const password = document.getElementById('reg-password').value;
+    const btn = document.getElementById('reg-submit');
+    const text = document.getElementById('reg-text');
+    const spinner = document.getElementById('reg-spinner');
+
+    btn.disabled = true; text.textContent = 'Creando...'; spinner.classList.remove('hidden');
+    try {
+      const cred = await createUserWithEmailAndPassword(auth, email, password);
+      await updateProfile(cred.user, { displayName: name });
+      await createUserDocument(cred.user, {
+        displayName: name, username, provider: 'email', role: 'user', status: 'pending'
+      });
+      showToast('¡Cuenta creada! Esperando aprobación ⏳', 'success');
+    } catch (err) {
+      showToast(getErrorMessage(err.code), 'error');
+    } finally {
+      btn.disabled = false; text.textContent = 'Crear cuenta'; spinner.classList.add('hidden');
+    }
+  });
+
+  // Forgot password
+  document.getElementById('forgot-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const email = document.getElementById('forgot-email').value.trim();
+    try {
+      await sendPasswordResetEmail(auth, email);
+      showToast('Email enviado ✉️', 'success');
+      navigate('login');
+    } catch (err) {
+      showToast(getErrorMessage(err.code), 'error');
+    }
+  });
+
+  window.logout = async function() {
+    try {
+      await signOut(auth);
+      showToast('Hasta pronto 👋', 'info');
+    } catch (err) {
+      showToast('Error al cerrar sesión', 'error');
+    }
+  };
+
+  // ==========================================
+  // AUTH STATE OBSERVER
+  // ==========================================
+  onAuthStateChanged(auth, async (user) => {
+    if (user) {
+      state.user = user;
+      const userData = await getUserData(user.uid);
+      if (!userData) {
+        // Documento no existe, crear (fallback)
+        state.userData = await createUserDocument(user);
+      } else {
+        state.userData = userData;
+        // Actualizar lastLogin
+        try { await updateDoc(doc(db, 'users', user.uid), { lastLogin: serverTimestamp() }); } catch (e) {}
+      }
+
+      // Decidir pantalla según estado/rol
+      if (state.userData.status === 'pending') {
+        navigate('pending');
+      } else if (state.userData.status === 'banned') {
+        showToast('Tu cuenta está baneada', 'error');
+        await signOut(auth);
+      } else if (state.userData.status === 'suspended') {
+        showToast('Tu cuenta está suspendida', 'error');
+        await signOut(auth);
+      } else if (state.userData.role === 'admin') {
+        navigate('admin');
+        adminView('dashboard');
+      } else {
+        navigate('dashboard');
+        loadUserDashboard();
+      }
+    } else {
+      state.user = null;
+      state.userData = null;
+      navigate('login');
+    }
+  });
+
+  // ==========================================
+  // ADMIN LOG
+  // ==========================================
+  async function logAdminAction(action, details = {}) {
+    if (!state.user || !db) return;
+    try {
+      await addDoc(collection(db, 'adminLogs'), {
+        adminId: state.user.uid,
+        adminEmail: state.user.email,
+        action, details, timestamp: serverTimestamp()
+      });
+    } catch (e) { console.error(e); }
+  }
+
+  // ==========================================
+  // USER DASHBOARD
+  // ==========================================
+  async function loadUserDashboard() {
+    if (!state.userData) return;
+    const u = state.userData;
+
+    // Greeting
+    document.getElementById('user-greeting').textContent = u.displayName.split(' ')[0];
+    document.getElementById('user-avatar-emoji').textContent = u.avatar ? '🙂' : '👤';
+
+    // Tier
+    const tiers = { bronze: '🥉 Bronce', silver: '🥈 Plata', gold: '🥇 Oro', platinum: '💎 Platino' };
+    document.getElementById('user-tier-badge').textContent = tiers[u.tier] || tiers.bronze;
+
+    // Streak
+    document.getElementById('user-streak-badge').textContent = `🔥 ${u.streakDays || 0} días`;
+
+    // Hours
+    const balance = u.hoursBalance || 0;
+    const total = u.hoursTotal || 50;
+    const percent = Math.min(100, (balance / total) * 100);
+    document.getElementById('user-hours-balance').textContent = balance.toFixed(1);
+    document.getElementById('user-hours-total').textContent = total;
+    document.getElementById('user-hours-progress').style.width = percent + '%';
+    document.getElementById('user-hours-header').textContent = balance.toFixed(1);
+
+    // Load user data from subcollections
+    try {
+      const gamesSnap = await getDocs(collection(db, 'users', u.uid, 'savedGames'));
+      document.getElementById('user-games-count').textContent = gamesSnap.size;
+
+      const achSnap = await getDocs(collection(db, 'users', u.uid, 'achievements'));
+      document.getElementById('user-achievements-count').textContent = achSnap.size;
+    } catch (e) {
+      console.error(e);
+    }
+
+    // Promos
+    loadUserPromos();
+
+    // Missions (mock)
+    renderUserMissions();
+  }
+
+  async function loadUserPromos() {
+    try {
+      const q = query(collection(db, 'promos'), where('active', '==', true), limit(5));
+      const snap = await getDocs(q);
+      const container = document.getElementById('user-promos');
+      if (snap.empty) {
+        container.innerHTML = '<div class="card min-w-[260px] flex-shrink-0"><p class="text-ink-soft text-sm">No hay promos activas ahora. Volvé más tarde 🎁</p></div>';
+        return;
+      }
+      container.innerHTML = snap.docs.map(docSnap => {
+        const p = docSnap.data();
+        return `
+          <div class="card min-w-[260px] flex-shrink-0 gradient-border">
+            <div class="text-3xl mb-2">${p.icon || '🎁'}</div>
+            <p class="font-bold mb-1">${p.title}</p>
+            <p class="text-sm text-ink-soft mb-3">${p.description || ''}</p>
+            <div class="flex items-center justify-between">
+              <span class="badge badge-info">${p.type || 'promo'}</span>
+              ${p.couponCode ? `<span class="font-mono text-xs text-accent">${p.couponCode}</span>` : ''}
+            </div>
+          </div>`;
+      }).join('');
+    } catch (e) {
+      console.error(e);
+    }
+  }
+
+  function renderUserMissions() {
+    const missions = [
+      { id: 1, title: 'Jugá 3 juegos distintos', reward: '+2 hs', icon: '🎮', done: false },
+      { id: 2, title: 'Vení 3 días esta semana', reward: '+3 hs', icon: '📅', done: true },
+      { id: 3, title: 'Invitá a un amigo', reward: '+5 hs', icon: '🤝', done: false },
+    ];
+    const done = missions.filter(m => m.done).length;
+    document.getElementById('missions-progress').textContent = `${done}/${missions.length}`;
+    document.getElementById('user-missions').innerHTML = missions.map(m => `
+      <div class="card flex items-center gap-3 ${m.done ? 'opacity-50' : ''}">
+        <div class="w-10 h-10 rounded-xl ${m.done ? 'bg-green-500/20' : 'bg-surface-elevated2'} flex items-center justify-center text-xl">
+          ${m.done ? '✅' : m.icon}
+        </div>
+        <div class="flex-1">
+          <p class="font-semibold text-sm ${m.done ? 'line-through' : ''}">${m.title}</p>
+          <p class="text-xs text-accent">${m.reward}</p>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  // ==========================================
+  // ADMIN DASHBOARD
+  // ==========================================
+  async function loadAdminDashboard() {
+    if (!db) return;
+    try {
+      // Usuarios
+      const usersSnap = await getDocs(collection(db, 'users'));
+      const users = usersSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+      state.users = users;
+
+      const total = users.length;
+      const pending = users.filter(u => u.status === 'pending').length;
+      const today = new Date(); today.setHours(0,0,0,0);
+      const activeToday = users.filter(u => u.lastLogin?.toDate && u.lastLogin.toDate() >= today).length;
+
+      document.getElementById('metric-total-users').textContent = total;
+      document.getElementById('metric-active-today').textContent = activeToday;
+      document.getElementById('metric-pending').textContent = pending;
+
+      const pendingBadge = document.getElementById('admin-pending-badge');
+      if (pending > 0) {
+        pendingBadge.textContent = pending;
+        pendingBadge.classList.remove('hidden');
+      } else {
+        pendingBadge.classList.add('hidden');
+      }
+
+      // Promos activas
+      const promosSnap = await getDocs(query(collection(db, 'promos'), where('active', '==', true)));
+      document.getElementById('metric-promos').textContent = promosSnap.size;
+      state.promos = promosSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+
+      // Top 5 users
+      const topUsers = [...users].sort((a,b) => (b.totalHoursPlayed||0) - (a.totalHoursPlayed||0)).slice(0, 5);
+      document.getElementById('top-users').innerHTML = topUsers.length ? topUsers.map((u, i) => `
+        <div class="flex items-center gap-3">
+          <span class="text-xl">${['🥇','🥈','🥉','4️⃣','5️⃣'][i]}</span>
+          <div class="flex-1 min-w-0">
+            <p class="truncate">${u.displayName || u.email}</p>
+            <p class="text-xs text-ink-soft">${u.totalHoursPlayed || 0} hs jugadas</p>
+          </div>
+        </div>
+      `).join('') : '<p class="text-ink-soft">Sin datos</p>';
+
+      // Pendientes
+      const pendingUsers = users.filter(u => u.status === 'pending');
+      document.getElementById('pending-users-list').innerHTML = pendingUsers.length ? pendingUsers.map(u => `
+        <div class="flex items-center gap-3 p-3 rounded-xl bg-surface-elevated">
+          <div class="w-10 h-10 gradient-accent rounded-xl flex items-center justify-center">👤</div>
+          <div class="flex-1 min-w-0">
+            <p class="font-semibold truncate">${u.displayName}</p>
+            <p class="text-xs text-ink-soft truncate">${u.email}</p>
+          </div>
+          <button onclick="approveUser('${u.uid}')" class="btn btn-primary text-xs px-3 py-1.5">Aprobar</button>
+        </div>
+      `).join('') : '<p class="text-ink-soft">No hay usuarios pendientes ✨</p>';
+    } catch (e) {
+      console.error(e);
+    }
+  }
+
+  // ==========================================
+  // USERS MANAGEMENT
+  // ==========================================
+  window.filterUsers = function(filter) {
+    state.userFilter = filter;
+    document.querySelectorAll('.user-filter-btn').forEach(b => {
+      const isActive = b.dataset.filter === filter;
+      b.className = `user-filter-btn btn ${isActive ? 'btn-primary' : 'btn-secondary'} text-sm`;
+    });
+    renderUsers();
+  };
+
+  window.renderUsers = async function() {
+    if (!state.users.length) {
+      try {
+        const snap = await getDocs(collection(db, 'users'));
+        state.users = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+      } catch (e) { console.error(e); }
+    }
+
+    const search = (document.getElementById('user-search').value || '').toLowerCase();
+    let filtered = state.users;
+    if (state.userFilter !== 'all') filtered = filtered.filter(u => u.status === state.userFilter);
+    if (search) filtered = filtered.filter(u =>
+      (u.displayName||'').toLowerCase().includes(search) ||
+      (u.email||'').toLowerCase().includes(search) ||
+      (u.username||'').toLowerCase().includes(search)
+    );
+
+    const tierEmoji = { bronze: '🥉', silver: '🥈', gold: '🥇', platinum: '💎' };
+    const statusBadge = {
+      pending: '<span class="badge badge-warning">⏳ Pendiente</span>',
+      approved: '<span class="badge badge-success">✓ Activo</span>',
+      suspended: '<span class="badge badge-danger">⛔ Suspendido</span>',
+      banned: '<span class="badge badge-danger">🚫 Baneado</span>',
+      rejected: '<span class="badge badge-danger">✗ Rechazado</span>',
+    };
+
+    document.getElementById('users-table-body').innerHTML = filtered.length ? filtered.map(u => `
+      <tr class="border-b border-surface-elevated2 hover:bg-surface-elevated">
+        <td class="py-3 px-2">
+          <div class="flex items-center gap-2">
+            <div class="w-8 h-8 gradient-accent rounded-lg flex items-center justify-center text-sm">👤</div>
+            <div>
+              <p class="font-semibold text-sm">${u.displayName || 'Sin nombre'}</p>
+              <p class="text-xs text-ink-soft font-mono">@${u.username || '-'}</p>
+            </div>
+          </div>
+        </td>
+        <td class="py-3 px-2 text-sm text-ink-soft">${u.email}</td>
+        <td class="py-3 px-2">${statusBadge[u.status] || '-'}</td>
+        <td class="py-3 px-2"><span class="badge badge-neutral">${tierEmoji[u.tier] || '🥉'} ${u.tier || 'bronze'}</span></td>
+        <td class="py-3 px-2 font-mono text-sm">${(u.hoursBalance || 0).toFixed(1)}</td>
+        <td class="py-3 px-2 text-right">
+          <div class="flex justify-end gap-1 flex-wrap">
+            ${u.status === 'pending' ? `<button onclick="approveUser('${u.id}')" class="btn btn-primary text-xs px-3 py-1">Aprobar</button>` : ''}
+            ${u.status === 'approved' ? `<button onclick="suspendUser('${u.id}')" class="btn btn-secondary text-xs px-3 py-1">Suspender</button>` : ''}
+            ${u.status === 'suspended' ? `<button onclick="approveUser('${u.id}')" class="btn btn-primary text-xs px-3 py-1">Reactivar</button>` : ''}
+            ${u.status !== 'banned' ? `<button onclick="banUser('${u.id}')" class="btn btn-danger text-xs px-3 py-1">Ban</button>` : ''}
+          </div>
+        </td>
+      </tr>
+    `).join('') : '<tr><td colspan="6" class="py-8 text-center text-ink-soft">Sin usuarios</td></tr>';
+  };
+
+  window.approveUser = async function(uid) {
+    if (!confirm('¿Aprobar usuario?')) return;
+    try {
+      await updateDoc(doc(db, 'users', uid), { status: 'approved', approvedAt: serverTimestamp() });
+      await logAdminAction('approve_user', { targetUid: uid });
+      showToast('Usuario aprobado ✅', 'success');
+      state.users = state.users.map(u => u.id === uid ? { ...u, status: 'approved' } : u);
+      renderUsers(); loadAdminDashboard();
+    } catch (e) { showToast('Error', 'error'); }
+  };
+
+  window.suspendUser = async function(uid) {
+    const reason = prompt('Motivo de suspensión:');
+    if (reason === null) return;
+    try {
+      await updateDoc(doc(db, 'users', uid), {
+        status: 'suspended',
+        suspension: { reason, suspendedAt: serverTimestamp(), suspendedBy: state.user.email }
+      });
+      await logAdminAction('suspend_user', { targetUid: uid, reason });
+      showToast('Usuario suspendido ⛔', 'info');
+      state.users = state.users.map(u => u.id === uid ? { ...u, status: 'suspended' } : u);
+      renderUsers(); loadAdminDashboard();
+    } catch (e) { showToast('Error', 'error'); }
+  };
+
+  window.banUser = async function(uid) {
+    const reason = prompt('Motivo del baneo permanente:');
+    if (reason === null) return;
+    try {
+      await updateDoc(doc(db, 'users', uid), {
+        status: 'banned',
+        ban: { reason, bannedAt: serverTimestamp(), bannedBy: state.user.email }
+      });
+      await logAdminAction('ban_user', { targetUid: uid, reason });
+      showToast('Usuario baneado 🚫', 'info');
+      state.users = state.users.map(u => u.id === uid ? { ...u, status: 'banned' } : u);
+      renderUsers(); loadAdminDashboard();
+    } catch (e) { showToast('Error', 'error'); }
+  };
+
+  // ==========================================
+  // PROMOS
+  // ==========================================
+  window.openPromoModal = function(promo = null) {
+    openModal(`
+      <h2 class="text-2xl font-bold mb-4">${promo ? 'Editar' : 'Nueva'} promo 🎁</h2>
+      <form id="promo-form" class="space-y-3">
+        <input class="input" name="title" placeholder="Título" value="${promo?.title || ''}" required />
+        <textarea class="input" name="description" placeholder="Descripción" rows="2">${promo?.description || ''}</textarea>
+        <div class="grid grid-cols-2 gap-2">
+          <select class="input" name="type">
+            <option value="discount" ${promo?.type==='discount'?'selected':''}>Descuento %</option>
+            <option value="2x1" ${promo?.type==='2x1'?'selected':''}>2x1</option>
+            <option value="happy_hour" ${promo?.type==='happy_hour'?'selected':''}>Happy hour</option>
+            <option value="combo" ${promo?.type==='combo'?'selected':''}>Combo</option>
+            <option value="tournament" ${promo?.type==='tournament'?'selected':''}>Torneo</option>
+          </select>
+          <input class="input font-mono" name="couponCode" placeholder="Código cupón" value="${promo?.couponCode || Math.random().toString(36).substring(2,8).toUpperCase()}" />
+        </div>
+        <input class="input" name="icon" placeholder="Emoji/Icono (ej: 🔥)" value="${promo?.icon || '🎁'}" />
+        <button type="submit" class="btn btn-primary w-full">Guardar promo</button>
+      </form>
+    `);
+    document.getElementById('promo-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const fd = new FormData(e.target);
+      const data = Object.fromEntries(fd);
+      data.active = true; data.currentUses = 0; data.createdAt = serverTimestamp();
+      try {
+        if (promo?.id) {
+          await updateDoc(doc(db, 'promos', promo.id), data);
+        } else {
+          await addDoc(collection(db, 'promos'), data);
+        }
+        await logAdminAction('save_promo', data);
+        showToast('Promo guardada ✅', 'success');
+        closeModal(); renderAdminPromos();
+      } catch (e) { showToast('Error', 'error'); }
+    });
+  };
+
+  window.renderAdminPromos = async function() {
+    try {
+      const snap = await getDocs(collection(db, 'promos'));
+      state.promos = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+      document.getElementById('admin-promos-list').innerHTML = state.promos.length ? state.promos.map(p => `
+        <div class="card">
+          <div class="flex items-start gap-3 mb-3">
+            <div class="w-12 h-12 gradient-accent rounded-xl flex items-center justify-center text-2xl">${p.icon || '🎁'}</div>
+            <div class="flex-1 min-w-0">
+              <p class="font-bold">${p.title}</p>
+              <p class="text-sm text-ink-soft truncate">${p.description || ''}</p>
+            </div>
+          </div>
+          <div class="flex items-center justify-between">
+            <span class="badge ${p.active ? 'badge-success' : 'badge-neutral'}">${p.active ? 'Activa' : 'Inactiva'}</span>
+            <div class="flex gap-1">
+              <button onclick='openPromoModal(${JSON.stringify(p).replace(/'/g,"&#39;")})' class="btn btn-secondary text-xs px-3 py-1">Editar</button>
+              <button onclick="deletePromo('${p.id}')" class="btn btn-danger text-xs px-3 py-1">🗑</button>
+            </div>
+          </div>
+        </div>
+      `).join('') : '<p class="text-ink-soft col-span-2">No hay promos aún</p>';
+    } catch (e) { console.error(e); }
+  };
+
+  window.deletePromo = async function(id) {
+    if (!confirm('¿Eliminar esta promo?')) return;
+    try {
+      await deleteDoc(doc(db, 'promos', id));
+      await logAdminAction('delete_promo', { id });
+      showToast('Promo eliminada', 'info');
+      renderAdminPromos();
+    } catch (e) { showToast('Error', 'error'); }
+  };
+
+  // ==========================================
+  // ACHIEVEMENTS
+  // ==========================================
+  window.openAchievementModal = function() {
+    openModal(`
+      <h2 class="text-2xl font-bold mb-4">Nuevo logro 🏆</h2>
+      <form id="ach-form" class="space-y-3">
+        <input class="input" name="name" placeholder="Nombre" required />
+        <textarea class="input" name="description" placeholder="Descripción" rows="2"></textarea>
+        <div class="grid grid-cols-2 gap-2">
+          <input class="input" name="icon" placeholder="Emoji" value="🏆" />
+          <select class="input" name="tier">
+            <option value="easy">Fácil</option>
+            <option value="medium">Medio</option>
+            <option value="hard">Difícil</option>
+            <option value="legendary">Legendario</option>
+          </select>
+        </div>
+        <button type="submit" class="btn btn-primary w-full">Crear logro</button>
+      </form>
+    `);
+    document.getElementById('ach-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const fd = new FormData(e.target);
+      const data = Object.fromEntries(fd);
+      data.active = true; data.triggerType = 'manual'; data.createdAt = serverTimestamp();
+      try {
+        await addDoc(collection(db, 'achievements'), data);
+        await logAdminAction('create_achievement', data);
+        showToast('Logro creado 🏆', 'success');
+        closeModal(); renderAdminAchievements();
+      } catch (e) { showToast('Error', 'error'); }
+    });
+  };
+
+  window.renderAdminAchievements = async function() {
+    try {
+      const snap = await getDocs(collection(db, 'achievements'));
+      state.achievements = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+      document.getElementById('admin-achievements-list').innerHTML = state.achievements.length ? state.achievements.map(a => `
+        <div class="card">
+          <div class="text-4xl mb-2">${a.icon || '🏆'}</div>
+          <p class="font-bold">${a.name}</p>
+          <p class="text-sm text-ink-soft mb-3">${a.description || ''}</p>
+          <span class="badge badge-info">${a.tier || 'easy'}</span>
+        </div>
+      `).join('') : '<p class="text-ink-soft col-span-3">No hay logros</p>';
+    } catch (e) { console.error(e); }
+  };
+
+  // ==========================================
+  // NEWS
+  // ==========================================
+  window.openNewsModal = function() {
+    openModal(`
+      <h2 class="text-2xl font-bold mb-4">Nueva noticia 📰</h2>
+      <form id="news-form" class="space-y-3">
+        <input class="input" name="title" placeholder="Título" required />
+        <textarea class="input" name="content" placeholder="Contenido" rows="4" required></textarea>
+        <label class="flex items-center gap-2 cursor-pointer">
+          <input type="checkbox" name="featured" class="accent-accent w-4 h-4" />
+          <span class="text-sm">Destacar en home</span>
+        </label>
+        <button type="submit" class="btn btn-primary w-full">Publicar</button>
+      </form>
+    `);
+    document.getElementById('news-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const fd = new FormData(e.target);
+      const data = Object.fromEntries(fd);
+      data.featured = !!data.featured; data.active = true; data.publishedAt = serverTimestamp();
+      try {
+        await addDoc(collection(db, 'news'), data);
+        await logAdminAction('publish_news', data);
+        showToast('Noticia publicada 📰', 'success');
+        closeModal(); renderAdminNews();
+      } catch (e) { showToast('Error', 'error'); }
+    });
+  };
+
+  window.renderAdminNews = async function() {
+    try {
+      const snap = await getDocs(collection(db, 'news'));
+      state.news = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+      document.getElementById('admin-news-list').innerHTML = state.news.length ? state.news.map(n => `
+        <div class="card">
+          <div class="flex items-start justify-between gap-3">
+            <div class="flex-1 min-w-0">
+              <p class="font-bold">${n.title}</p>
+              <p class="text-sm text-ink-soft mt-1">${n.content?.substring(0, 150)}...</p>
+            </div>
+            ${n.featured ? '<span class="badge badge-info">⭐ Destacada</span>' : ''}
+          </div>
+        </div>
+      `).join('') : '<p class="text-ink-soft">No hay noticias</p>';
+    } catch (e) { console.error(e); }
+  };
+
+  window.renderAdminShop = function() {
+    document.getElementById('admin-shop-list').innerHTML = '<p class="text-ink-soft col-span-3">Módulo kiosco en desarrollo 🛒</p>';
+  };
+  window.renderAdminReservations = function() {
+    document.getElementById('admin-reservations-list').innerHTML = '<p class="text-ink-soft">Módulo reservas en desarrollo 📅</p>';
+  };
+
+  window.renderAdminLogs = async function() {
+    try {
+      const q = query(collection(db, 'adminLogs'), orderBy('timestamp', 'desc'), limit(50));
+      const snap = await getDocs(q);
+      document.getElementById('admin-logs-list').innerHTML = snap.docs.length ? snap.docs.map(d => {
+        const log = d.data();
+        const ts = log.timestamp?.toDate ? log.timestamp.toDate().toLocaleString('es-AR') : '-';
+        return `<div class="flex items-start gap-2 p-2 border-b border-surface-elevated2 last:border-0">
+          <span class="text-ink-soft text-xs">${ts}</span>
+          <span class="text-accent">${log.adminEmail}</span>
+          <span class="flex-1">${log.action}</span>
+        </div>`;
+      }).join('') : '<p class="text-ink-soft p-4">Sin logs</p>';
+    } catch (e) { console.error(e); }
+  };
+
+  // ==========================================
+  // SERVICE WORKER REGISTER
+  // ==========================================
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', async () => {
+      try {
+        const reg = await navigator.serviceWorker.register('/sw.js');
+        console.log('SW registered:', reg.scope);
+      } catch (err) {
+        console.error('SW registration failed:', err);
+      }
+    });
+  }
+
+  // Initial splash timeout fallback
+  setTimeout(() => {
+    if (state.currentScreen === 'splash' && !firebaseConfig.apiKey.startsWith('YOUR')) {
+      // Firebase está configurado, el observer maneja el redirect
+    } else if (state.currentScreen === 'splash') {
+      // Sin config, mostrar login igual
+      navigate('login');
+      showToast('⚠️ Configurá Firebase en el código', 'info');
+    }
+  }, 5000);
+
+  // Expose to window for inline handlers
+  window.adminView = adminView;
+  window.renderUsers = renderUsers;
+</script>
+</body>
+</html>
